@@ -1,0 +1,15 @@
+{
+    "name": "mighty-code/google-movies-client",
+    "require": {
+        "sunra/php-simple-html-dom-parser": "v1.5.0"
+    },
+    "authors": [
+        {
+            "name": "Oliver Kaufmann",
+            "email": "mighty@mighty-code.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
+    }
+}
