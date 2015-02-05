@@ -1,14 +1,23 @@
 {
     "name": "mighty-code/google-movies-client",
+    "type": "library",
+    "description": "Extended Client to fetch data from http://google.com/movies in an object oriented way.", 
+    "keywords": ["showtime", "movie", "client"],
+    "homepage": "https://github.com/mighty-code/google-movie-client",
+    "license": "MIT",
     "require": {
         "sunra/php-simple-html-dom-parser": "v1.5.0"
     },
     "authors": [
         {
             "name": "Oliver Kaufmann",
-            "email": "mighty@mighty-code.com"
+            "email": "mighty@mighty-code.com",
+            "homepage": "https://github.com/mighty-code"
         }
     ],
+    "require": {
+        "php": ">=5.4"
+    },
     "autoload": {
         "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
     }
