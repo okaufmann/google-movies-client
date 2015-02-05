@@ -6,6 +6,7 @@
     "homepage": "https://github.com/mighty-code/google-movie-client",
     "license": "MIT",
     "require": {
+        "php": ">=5.4",
         "sunra/php-simple-html-dom-parser": "v1.5.0"
     },
     "authors": [
@@ -15,9 +16,6 @@
             "homepage": "https://github.com/mighty-code"
         }
     ],
-    "require": {
-        "php": ">=5.4"
-    },
     "autoload": {
         "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
     }
