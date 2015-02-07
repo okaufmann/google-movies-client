@@ -36,3 +36,6 @@ License
 MIT
 
 Brought to you by [Mighty Code](http://mighty-code.com)
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mighty-code/google-movie-client/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
