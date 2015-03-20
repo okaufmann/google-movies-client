@@ -7,11 +7,16 @@ use MightyCode\GoogleMovieClient\Models\Movie;
 use MightyCode\GoogleMovieClient\Models\Showtime;
 use MightyCode\GoogleMovieClient\Models\ShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\Theater;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
-class Client
+
+class MovieClient
 {
     private $_baseUrl = "http://www.google.com/movies";
-    private $_userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 Safari/537.36";
+
+    //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
+    private $_userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
 
     /**
      * search for a movie title an get showtimes
@@ -150,7 +155,7 @@ class Client
 
         if (count($movieDivs) > 1) {
             $multipleFound = true;
-        }else{
+        } else {
             $midLink = $htmlDom->dom()->find("#left_nav .section a", 0)->attr["href"];
             $mid = $this->getParamFromLink($midLink, "mid");
         }
@@ -237,7 +242,7 @@ class Client
     private function getParamFromLink($url, $paramName)
     {
         $parts = parse_url(html_entity_decode($url));
-        if(isset($parts)){
+        if (isset($parts)) {
             parse_str($parts['query'], $query);
             if (array_key_exists($paramName, $query)) {
                 return $query[$paramName];
@@ -269,19 +274,18 @@ class Client
             'date' => $date
         );
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->_baseUrl . '?' . http_build_query($params));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
-        curl_setopt($curl, CURLOPT_USERAGENT, $this->_userAgent);
+        $url = $this->_baseUrl . '?' . http_build_query($params);
+
+        $client = new Client();
+        $request = $client->createRequest("GET", $url);
+        $request->setHeader('User-Agent', $this->_userAgent);
+
+        $gresponse = $client->send($request);
 
         $response = new DataResponse();
-        $response->body = curl_exec($curl);
-        $response->code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $response->headers = curl_getinfo($curl, CURLINFO_HEADER_OUT);
-
-        curl_close($curl);
+        $response->body = $gresponse->getBody()->getContents();
+        $response->code = $gresponse->getStatusCode();
+        $response->headers = $gresponse->getHeaders();
 
         return $response;
     }
@@ -301,15 +305,15 @@ class Client
 
         $mid = $this->getParamFromLink($href, "mid");
 
-        if(!empty($mid)){
+        if (!empty($mid)) {
             return $mid;
         }
 
         //second try => param on info links
         $links = $movieDiv->find("div.links a");
-        foreach($links as $link){
+        foreach ($links as $link) {
             $mid = $this->getParamFromLink($link["href"], "mid");
-            if(!empty($mid)){
+            if (!empty($mid)) {
                 return $mid;
             }
         }
@@ -327,16 +331,16 @@ class Client
     {
         $title = null;
         $header = $movieDiv->find(".header h2 a", 0);
-        if($header != null){
+        if ($header != null) {
             $title = trim($header->innertext);
-        }else{
+        } else {
             $header = $movieDiv->find(".header h2", 0);
-            if($header != null){
+            if ($header != null) {
                 $title = trim($header->innertext);
             }
         }
 
-        if(!empty($title)){
+        if (!empty($title)) {
             return $title;
         }
 

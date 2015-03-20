@@ -3,12 +3,12 @@
 
 require_once 'vendor/autoload.php';
 
-use MightyCode\GoogleMovieClient\Client;
+use MightyCode\GoogleMovieClient\MovieClient;
 
-$test = new Client();
+$test = new MovieClient();
 
-$days = $test->getShowtimesByMovieId("New York", "1b9bce36e4cc7c72");
-//$days = $test->findShowtimesByMovieTitle("New York","American Sniper","en");
+//$days = $test->getShowtimesByMovieId("New York", "1b9bce36e4cc7c72");
+$days = $test->findShowtimesByMovieTitle("Thun","Kingsman","de");
 
 var_dump($days);
 
