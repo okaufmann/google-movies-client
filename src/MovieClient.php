@@ -9,6 +9,7 @@ use MightyCode\GoogleMovieClient\Models\ShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\Theater;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\DomCrawler\Crawler;
 
 
 class MovieClient
@@ -33,7 +34,8 @@ class MovieClient
 
         $dataResponse = $this->getData($near, $search, null, null, null, $lang);
 
-        $parsedMovies = $this->parseMovies($dataResponse);
+        $crawledMovies = $this->crawlMovies($dataResponse);
+        //$parsedMovies = $this->parseMovies($dataResponse);
 
         if (count($parsedMovies) == 0) {
             return $movieList;
@@ -136,13 +138,92 @@ class MovieClient
         return $showtimeDay;
     }
 
+    private function crawlMovies(DataResponse $response)
+    {
+        $movies = array();
+        $multipleFound = false;
+        $crawler = $response->getCrawler();
+        $mid = null;
+        $movieDivs = $crawler->filter("#movie_results .movie");
+
+        if (count($movieDivs) === 0) {
+            return $movies;
+        }
+
+        if (count($movieDivs) > 1) {
+            $multipleFound = true;
+        } else {
+            $midLink = $crawler->filter("#left_nav .section a")->first()->attr("href");
+            $mid = $this->getParamFromLink($midLink, "mid");
+        }
+
+        foreach ($movieDivs as $i => $contents) {
+            $movie = new Movie();
+            $movieDiv = new Crawler($contents);
+
+            if ($multipleFound) {
+                $movie->mid = $this->tryGetMid($movieDiv);
+                $movie->name = $this->tryGetMovieTitle($movieDiv);
+            } else {
+                $movie->name = $this->tryGetMovieTitle($movieDiv);
+                $movie->mid = $mid;
+            }
+
+            $infoDivs = $movieDiv->filter("div.info");
+            if (count($infoDivs) > 1) {
+                $movie->info = join(" ", $infoDivs[1]->text());
+                $links = $movieDiv->filter("div.links a");
+                $movie->imdbLink = $this->getParamFromLink($links[count($links) - 1]->attr["href"], "q");
+            } else {
+                $movie->info = join(" ", $movieDiv->filter("div.info")->first()->text());
+            }
+
+            foreach ($movieDiv->filter(".theater") as $y => $theaterDivContent) {
+
+                $theaterDiv = new Crawler($theaterDivContent);
+
+                $theaterHref = $theaterDiv->filter(".name a")->first();
+
+                $theater = new Theater();
+                $theater->tid = $this->getParamFromLink($theaterHref->attr("href"), "tid");
+                $theater->name = $theaterHref->text();
+                $theater->address = strip_tags($theaterAddress = $theaterDiv->filter(".address")->first()->text());
+
+                foreach ($theaterDiv->filter(".times") as $j => $timeSpanContent) {
+
+                    $timeSpan = new Crawler($timeSpanContent);
+                    $texts = explode(" ",$timeSpan->text());
+
+                    $showtime = new Showtime();
+                    $showtime->info = $texts[0];
+
+                    foreach ($texts as $text) {
+                        $time = trim(html_entity_decode($text));
+
+                        preg_match("/^[0-9]{1,2}:[0-9]{1,2}/", $time, $matches);
+                        if (count($matches) > 0) {
+                            $showtime->times[] = $matches[0];
+                        }
+                    }
+
+                    $theater->showtimes[] = $showtime;
+                }
+
+                $movie->theaters[] = $theater;
+            }
+
+            $movies[] = $movie;
+        }
+
+    }
+
     /**
      * parse the html and return the found movies with all information as Objects
      * @param $htmlDom
      * @return array
      * @throws \Exception
      */
-    private function parseMovies($htmlDom)
+    private function parseMovies(DataResponse $htmlDom)
     {
         $multipleFound = false;
         $mid = null;
@@ -222,7 +303,8 @@ class MovieClient
      * @param $htmlDom
      * @return null
      */
-    private function getInputByName($name, $htmlDom)
+    private
+    function getInputByName($name, $htmlDom)
     {
         foreach ($htmlDom->find("input[type=hidden]") as $input) {
             if ($input->attr["name"] == $name) {
@@ -239,7 +321,8 @@ class MovieClient
      * @param $paramName
      * @return null
      */
-    private function getParamFromLink($url, $paramName)
+    private
+    function getParamFromLink($url, $paramName)
     {
         $parts = parse_url(html_entity_decode($url));
         if (isset($parts)) {
@@ -263,7 +346,8 @@ class MovieClient
      * @param string $language
      * @return DataResponse
      */
-    private function getData($near = null, $search = null, $mid = null, $tid = null, $date = null, $language = "de")
+    private
+    function getData($near = null, $search = null, $mid = null, $tid = null, $date = null, $language = "de")
     {
         $params = array(
             'near' => $near,
@@ -296,12 +380,12 @@ class MovieClient
      * @return null
      * @throws Exception
      */
-    private function tryGetMid($movieDiv)
+    private function tryGetMid(Crawler $movieDiv)
     {
         $mid = null;
         //first try => title link
-        $titleHref = $movieDiv->find(".header h2 a", 0);
-        $href = $titleHref->attr["href"];
+        $titleHref = $movieDiv->filter(".header h2 a")->first();
+        $href = $titleHref->attr("href");
 
         $mid = $this->getParamFromLink($href, "mid");
 
@@ -310,7 +394,7 @@ class MovieClient
         }
 
         //second try => param on info links
-        $links = $movieDiv->find("div.links a");
+        $links = $movieDiv->filter("div.links a")->first();
         foreach ($links as $link) {
             $mid = $this->getParamFromLink($link["href"], "mid");
             if (!empty($mid)) {
@@ -327,16 +411,17 @@ class MovieClient
      * @return null|string
      * @throws \Exception
      */
-    private function tryGetMovieTitle($movieDiv)
+    private
+    function tryGetMovieTitle(Crawler $movieDiv)
     {
         $title = null;
-        $header = $movieDiv->find(".header h2 a", 0);
-        if ($header != null) {
-            $title = trim($header->innertext);
+        $header = $movieDiv->filter(".header h2 a")->first();
+        if ($header != null && count($header) != 0) {
+            $title = trim($header->text());
         } else {
-            $header = $movieDiv->find(".header h2", 0);
-            if ($header != null) {
-                $title = trim($header->innertext);
+            $header = $movieDiv->filter(".header h2")->first();
+            if ($header != null && count($header) != 0) {
+                $title = trim($header->text());
             }
         }
 
