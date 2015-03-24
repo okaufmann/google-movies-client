@@ -1,15 +1,21 @@
 <?php
-
-
 require_once 'vendor/autoload.php';
 
 use MightyCode\GoogleMovieClient\MovieClient;
 
+
 $test = new MovieClient();
+try {
+    //$days = $test->getShowtimesByMovieId("New York", "1b9bce36e4cc7c72");
+    $days = $test->findShowtimesByMovieTitle("Bern", "Kingsman", "de");
+    header('Content-Type: application/json; charset=utf-8');
 
-//$days = $test->getShowtimesByMovieId("New York", "1b9bce36e4cc7c72");
-$days = $test->findShowtimesByMovieTitle("Thun","Kingsman","de");
+    echo json_encode($days);
+} catch (Exception $ex) {
+    echo $ex->getMessage();
 
-var_dump($days);
+    echo "<hr/>";
 
-?>
+    echo $ex->getTraceAsString();
+}
+

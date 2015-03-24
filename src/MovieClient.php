@@ -35,28 +35,27 @@ class MovieClient
         $dataResponse = $this->getData($near, $search, null, null, null, $lang);
 
         $crawledMovies = $this->crawlMovies($dataResponse);
-        //$parsedMovies = $this->parseMovies($dataResponse);
 
-        if (count($parsedMovies) == 0) {
+        if (count($crawledMovies) == 0) {
             return $movieList;
         }
 
         $dateText = $objDateTime->format("Y-m-d");
 
-        $movieList[$dateText] = $parsedMovies;
+        $movieList[$dateText] = $crawledMovies;
 
-        $firstsection = $dataResponse->dom()->find("#left_nav .section", 1);
-        foreach ($firstsection->find("a") as $date) {
-
+        $firstsection = $dataResponse->getCrawler()->filter("#left_nav .section a");
+        foreach ($firstsection as $i => $link) {
+            $linkObj = new Crawler($link);
             $objDateTime->add(new \DateInterval('P1D'));
 
             $dateText = $objDateTime->format("Y-m-d");
 
-            $date = $this->getParamFromLink($date->attr["href"], "date");
+            $date = $this->getParamFromLink($linkObj->attr("href"), "date");
 
             $dataResponse = $this->getData($near, $search, null, null, $date, $lang);
 
-            $movieList[$dateText] = $this->parseMovies($dataResponse);
+            $movieList[$dateText] = $this->crawlMovies($dataResponse);
         }
 
         return $movieList;
@@ -82,10 +81,10 @@ class MovieClient
         $objDateTime = new \DateTime('NOW');
 
         //access google to fetch data
-        $htmlDom = $this->getData($near, null, $mid, null, null, $lang);
+        $dataResponse = $this->getData($near, null, $mid, null, null, $lang);
 
         //parse result
-        $parsedMovies = $this->parseMovies($htmlDom);
+        $parsedMovies = $this->crawlMovies($dataResponse);
 
         if ($parsedMovies == null || count($parsedMovies) == 0) {
             return null;
@@ -93,16 +92,17 @@ class MovieClient
 
         $movie = $parsedMovies[0];
 
-        $firstsection = $htmlDom->dom()->find("#left_nav .section", 1);
-        foreach ($firstsection->find("a") as $date) {
+        $firstsection = $dataResponse->getCrawler()->filter("#left_nav .section a");
+        foreach ($firstsection as $i => $dateNode) {
+            $date = new Crawler($dateNode);
 
             $objDateTime->add(new \DateInterval('P1D'));
 
-            $date = $this->getParamFromLink($date->attr["href"], "date");
+            $date = $this->getParamFromLink($date->attr("href"), "date");
 
-            $htmlDom = $this->getData($near, null, $mid, null, $date, $lang);
+            $dataResponse = $this->getData($near, null, $mid, null, $date, $lang);
 
-            $parsedMovies = $this->parseMovies($htmlDom);
+            $parsedMovies = $this->crawlMovies($dataResponse);
 
             if ($parsedMovies == null || count($parsedMovies) == 0) {
                 return null;
@@ -170,12 +170,12 @@ class MovieClient
             }
 
             $infoDivs = $movieDiv->filter("div.info");
-            if (count($infoDivs) > 1) {
-                $movie->info = join(" ", $infoDivs[1]->text());
+            if (count($infoDivs) >=2) {
+                $movie->info = $infoDivs->first()->text();
                 $links = $movieDiv->filter("div.links a");
-                $movie->imdbLink = $this->getParamFromLink($links[count($links) - 1]->attr["href"], "q");
+                $movie->imdbLink = $this->getParamFromLink($links->last()->attr("href"), "q");
             } else {
-                $movie->info = join(" ", $movieDiv->filter("div.info")->first()->text());
+                $movie->info = $movieDiv->filter("div.info")->first()->text();
             }
 
             foreach ($movieDiv->filter(".theater") as $y => $theaterDivContent) {
@@ -199,8 +199,9 @@ class MovieClient
 
                     foreach ($texts as $text) {
                         $time = trim(html_entity_decode($text));
+                        $time = str_replace("&nbsp","",$time);
 
-                        preg_match("/^[0-9]{1,2}:[0-9]{1,2}/", $time, $matches);
+                        preg_match("/[0-9][0-9]:[0-9][0-9]/", $time, $matches);
                         if (count($matches) > 0) {
                             $showtime->times[] = $matches[0];
                         }
@@ -215,6 +216,7 @@ class MovieClient
             $movies[] = $movie;
         }
 
+        return $movies;
     }
 
     /**
@@ -222,6 +224,7 @@ class MovieClient
      * @param $htmlDom
      * @return array
      * @throws \Exception
+     * @deprecated Please use crawlMovies
      */
     private function parseMovies(DataResponse $htmlDom)
     {

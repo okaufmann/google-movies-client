@@ -27,6 +27,9 @@ var_dump($result);
 
 ### Todo's
 
+ - Parse dates not show in the date link list as well
+ - Multipage Search Result parsing
+ - improve performance
  - Write Tests
  - Refactoring
 
@@ -36,6 +39,4 @@ License
 MIT
 
 Brought to you by [Mighty Code](http://mighty-code.com)
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mighty-code/google-movie-client/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
