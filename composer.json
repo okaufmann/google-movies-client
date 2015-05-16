@@ -21,5 +21,10 @@
     ],
     "autoload": {
         "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
-    }
+    },
+    "config": {
+    	"preferred-install": "dist",
+    	"minimum-stability": "dev",
+    	"prefer-stable" : true
+  	}
 }
