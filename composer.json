@@ -1,5 +1,5 @@
 {
-    "name": "mighty-code/google-movies-client",
+    "name": "okaufmann/google-movies-client",
     "type": "library",
     "description": "Extended Client to fetch data from http://google.com/movies in an object oriented way.", 
     "keywords": ["showtime", "movie", "client"],
