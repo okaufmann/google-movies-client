@@ -1,5 +1,7 @@
 <?php
 
+namespace MightyCode\GoogleMovieClient;
+
 interface MovieClientInterface
 {
 
