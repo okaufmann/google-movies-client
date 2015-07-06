@@ -1,30 +1,33 @@
 {
-    "name": "okaufmann/google-movies-client",
-    "type": "library",
-    "description": "Extended Client to fetch data from http://google.com/movies in an object oriented way.", 
-    "keywords": ["showtime", "movie", "client"],
-    "homepage": "https://github.com/mighty-code/google-movie-client",
-    "license": "MIT",
-    "require": {
-        "php": ">=5.4",
-        "sunra/php-simple-html-dom-parser": "v1.5.0",
-        "symfony/dom-crawler": "3.0.*@dev",
-        "symfony/css-selector": "3.0.*@dev",
-        "guzzlehttp/guzzle": "~5.0"
-    },
-    "authors": [
-        {
-            "name": "Oliver Kaufmann",
-            "email": "mighty@mighty-code.com",
-            "homepage": "https://github.com/mighty-code"
-        }
-    ],
-    "autoload": {
-        "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "preferred-install": "dist"
+  "name": "okaufmann/google-movies-client",
+  "type": "library",
+  "description": "Extended Client to fetch data from http://google.com/movies in an object oriented way.",
+  "keywords": [
+    "showtime",
+    "movie",
+    "client"
+  ],
+  "homepage": "https://github.com/mighty-code/google-movie-client",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4",
+    "symfony/dom-crawler": "2.8.*",
+    "symfony/css-selector": "2.8.*",
+    "guzzlehttp/guzzle": "~5.0"
+  },
+  "authors": [
+    {
+      "name": "Oliver Kaufmann",
+      "email": "mighty@mighty-code.com",
+      "homepage": "https://github.com/mighty-code"
     }
+  ],
+  "autoload": {
+    "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "preferred-install": "dist"
+  }
 }

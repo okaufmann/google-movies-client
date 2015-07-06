@@ -8,5 +8,4 @@ class Theater {
     public $address;
 
     public $showtimes = [];
-    public $theater = [];
 }

@@ -9,5 +9,4 @@ class Movie {
     public $imdbLink;
 
     public $showtimeDays = [];
-    public $theaters = [];
 }
