@@ -50,4 +50,16 @@ interface MovieClientInterface
      */
     public function getShowtimesNear($near, $lang = 'en', $date = 0, $start = 0);
 
+    /**
+     * Returns Showtimes found by a search for a movie title
+     *
+     * @param string $near
+     * @param string $name
+     * @param string $lang
+     * @param int $date
+     * @param int $start
+     * @return mixed
+     */
+    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $date = 0, $start = 0);
+
 }
