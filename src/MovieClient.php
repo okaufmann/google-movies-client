@@ -2,11 +2,13 @@
 
 namespace MightyCode\GoogleMovieClient;
 
+use GuzzleHttp\Client;
+use MightyCode\GoogleMovieClient\Models\DataResponse;
 
 class MovieClient implements \MovieClientInterface
 {
 
-    private static $_baseUrl = "http://www.google.com/movies";
+    private $_baseUrl = "http://www.google.com/movies";
 
     //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
     private $_userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
@@ -24,7 +26,8 @@ class MovieClient implements \MovieClientInterface
     public function getShowtimesByMovieId($mid, $near, $lang = 'en', $date = 0, $start = 0)
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
-        // TODO: Implement getShowtimesByMovieId() method.
+
+        $dataResponse = $this->getData($near, null, $mid, null, $date, $lang);
     }
 
     /**
@@ -89,5 +92,45 @@ class MovieClient implements \MovieClientInterface
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
         // TODO: Implement queryShowtimesByMovieTitleNear() method.
+    }
+
+    /**
+     * get the requested html from google with the passed parameters
+     *
+     * @param null $near
+     * @param null $search
+     * @param null $mid
+     * @param null $tid
+     * @param string $language
+     * @param null $date
+     * @param int $start
+     * @return DataResponse
+     */
+    private function getData($near = null, $search = null, $mid = null, $tid = null, $language = "en", $date = null, $start = 0)
+    {
+        $params = array(
+            'near' => $near,
+            'mid' => $mid,
+            'tid' => $tid,
+            'q' => $search, //Movie title
+            'hl' => $language, //en, de, fr...
+            'date' => $date,
+            'start' => $start
+        );
+
+        $url = $this->_baseUrl . '?' . http_build_query($params);
+
+        $client = new Client();
+        $request = $client->createRequest("GET", $url);
+        $request->setHeader('User-Agent', $this->_userAgent);
+
+        $gresponse = $client->send($request);
+
+        $response = new DataResponse();
+        $response->body = $gresponse->getBody()->getContents();
+        $response->code = $gresponse->getStatusCode();
+        $response->headers = $gresponse->getHeaders();
+
+        return $response;
     }
 }
