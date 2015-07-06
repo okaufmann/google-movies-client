@@ -13,7 +13,10 @@
     "php": ">=5.4",
     "symfony/dom-crawler": "2.8.*",
     "symfony/css-selector": "2.8.*",
-    "guzzlehttp/guzzle": "~5.0"
+    "guzzlehttp/guzzle": "~5.0",
+    "illuminate/support": "^5.2@dev",
+    "symfony/var-dumper": "2.8.*",
+    "nesbot/carbon": "~1.19"
   },
   "authors": [
     {

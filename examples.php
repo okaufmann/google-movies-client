@@ -6,11 +6,10 @@ use MightyCode\GoogleMovieClient\MovieClient;
 
 $test = new MovieClient();
 try {
-    $days = $test->getShowtimesByMovieId("New York", "808c5c8cc99039b7");
+    $days = $test->getShowtimesByMovieId("808c5c8cc99039b7", "Unterseen", "de");
     //$days = $test->findShowtimesByMovieTitle("Bern", "Minions", "de");
-    header('Content-Type: application/json; charset=utf-8');
-
-    echo json_encode($days);
+    //header('Content-Type: application/json; charset=utf-8');
+    echo dd($days);
 } catch (Exception $ex) {
     echo $ex->getMessage();
 

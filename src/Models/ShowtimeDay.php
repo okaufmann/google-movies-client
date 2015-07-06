@@ -5,6 +5,7 @@ namespace MightyCode\GoogleMovieClient\Models;
 class ShowtimeDay
 {
     private $date;
+    
     private $theaters = [];
 
     /**

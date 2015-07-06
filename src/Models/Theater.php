@@ -8,7 +8,7 @@ class Theater
     private $name;
     private $address;
 
-    private $showtimes = [];
+    private $showtimeInfo = [];
 
     /**
      * @return mixed
@@ -61,16 +61,16 @@ class Theater
     /**
      * @return array
      */
-    public function getShowtimes()
+    public function getShowtimeInfo()
     {
-        return $this->showtimes;
+        return $this->showtimeInfo;
     }
 
     /**
      * @param array $showtimes
      */
-    public function setShowtimes($showtimes)
+    public function setShowtimeInfo($showtimeInfo)
     {
-        $this->showtimes = $showtimes;
+        $this->showtimeInfo = $showtimeInfo;
     }
 }

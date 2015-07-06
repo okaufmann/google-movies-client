@@ -2,7 +2,7 @@
 
 namespace MightyCode\GoogleMovieClient\Models;
 
-class Showtime
+class ShowtimeInfo
 {
     private $info;
     private $times = [];

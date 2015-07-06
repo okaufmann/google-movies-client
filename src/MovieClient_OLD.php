@@ -4,7 +4,7 @@ namespace MightyCode\GoogleMovieClient;
 
 use MightyCode\GoogleMovieClient\Models\DataResponse;
 use MightyCode\GoogleMovieClient\Models\Movie;
-use MightyCode\GoogleMovieClient\Models\Showtime;
+use MightyCode\GoogleMovieClient\Models\ShowtimeInfo;
 use MightyCode\GoogleMovieClient\Models\ShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\Theater;
 use GuzzleHttp\Client;
@@ -171,7 +171,7 @@ class MovieClient_old
 
             $infoDivs = $movieDiv->filter("div.info");
 
-            if (count($infoDivs) >=2) {
+            if (count($infoDivs) >= 2) {
                 $movie->info = $infoDivs->first()->text();
                 $links = $movieDiv->filter("div.links a");
                 $movie->imdbLink = $this->getParamFromLink($links->last()->attr("href"), "q");
@@ -193,14 +193,14 @@ class MovieClient_old
                 foreach ($theaterDiv->filter(".times") as $j => $timeSpanContent) {
 
                     $timeSpan = new Crawler($timeSpanContent);
-                    $texts = explode(" ",$timeSpan->text());
+                    $texts = explode(" ", $timeSpan->text());
 
-                    $showtime = new Showtime();
+                    $showtime = new ShowtimeInfo();
                     $showtime->info = $texts[0];
 
                     foreach ($texts as $text) {
                         $time = trim(html_entity_decode($text));
-                        $time = str_replace("&nbsp","",$time);
+                        $time = str_replace("&nbsp", "", $time);
 
                         preg_match("/[0-9][0-9]:[0-9][0-9]/", $time, $matches);
                         if (count($matches) > 0) {
@@ -208,7 +208,7 @@ class MovieClient_old
                         }
                     }
 
-                    $theater->showtimes[] = $showtime;
+                    $theater->showtimeInfo[] = $showtime;
                 }
 
                 $movie->theaters[] = $theater;
@@ -277,7 +277,7 @@ class MovieClient_old
                 foreach ($theaterDiv->find(".times") as $timeSpan) {
                     $texts = $timeSpan->find("text");
 
-                    $showtime = new Showtime();
+                    $showtime = new ShowtimeInfo();
                     $showtime->info = $texts[0]->innertext;
 
                     foreach ($texts as $text) {
@@ -289,7 +289,7 @@ class MovieClient_old
                         }
                     }
 
-                    $theater->showtimes[] = $showtime;
+                    $theater->showtimeInfo[] = $showtime;
                 }
 
                 $movie->theaters[] = $theater;
@@ -350,8 +350,7 @@ class MovieClient_old
      * @param string $language
      * @return DataResponse
      */
-    private
-    function getData($near = null, $search = null, $mid = null, $tid = null, $date = null, $language = "de")
+    private function getData($near = null, $search = null, $mid = null, $tid = null, $date = null, $language = "de")
     {
         $params = array(
             'near' => $near,
