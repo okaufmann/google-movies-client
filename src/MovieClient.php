@@ -20,7 +20,8 @@ class MovieClient implements MovieClientInterface
 
     private $http_client;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->constructHttpClient();
     }
 
@@ -34,13 +35,13 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return array
      */
-    public function getShowtimesByMovieId($mid, $near, $lang = 'en')
+    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $dateoffset = 0)
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, $mid, null, $lang);
+        $dataResponse = $this->getData($near, null, $mid, null, $lang, $dateoffset);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -50,7 +51,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByMovie($dayDate->copy());
             $days[] = $result;
 
-            for ($i = 1; $i < 20; $i++) {
+            for ($i = $dateoffset + 1; $i < 20; $i++) {
                 $dataResponse = $this->getData($near, null, $mid, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -76,13 +77,13 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $near, $lang = 'en')
+    public function getShowtimesByTheaterId($tid, $near, $lang = 'en', $dateoffset = 0)
     {
         //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, null, $tid, $lang);
+        $dataResponse = $this->getData($near, null, null, $tid, $lang, $dateoffset);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -93,7 +94,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByTheater($dayDate);
             $days[] = $result;
 
-            for ($i = 1; $i < 20; $i++) {
+            for ($i = $dateoffset + 1; $i < 20; $i++) {
                 $dataResponse = $this->getData($near, null, null, $tid, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -119,7 +120,7 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getTheatersNear($near, $lang = 'en')
+    public function getTheatersNear($near, $lang = 'en', $dateoffset = null)
     {
         //http://google.com/movies?near=thun&hl=de
         //http://google.com/movies?near=thun&hl=de&start=10 (next page)
@@ -136,7 +137,7 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesNear($near, $lang = 'en')
+    public function getShowtimesNear($near, $lang = 'en', $dateoffset = null)
     {
         //http://google.com/movies?near=Interlaken&hl=de
         //http://google.com/movies?near=Interlaken&hl=de&start=10
@@ -153,13 +154,18 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en')
+    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateoffset = null)
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
         // TODO: Implement queryShowtimesByMovieTitleNear() method.
     }
 
-    private function constructHttpClient(){
+
+    /**
+     * Prepares the http Client
+     */
+    private function constructHttpClient()
+    {
         $this->http_client = new Client();
         $this->http_client->setDefaultOption('headers', ['User-Agent' => $this->_userAgent]);
     }
@@ -194,7 +200,7 @@ class MovieClient implements MovieClientInterface
             $response->body = file_get_contents($url);
         } else {
             $url = $this->_baseUrl . '?' . http_build_query($params);
-            
+
             $guzzle_response = $this->http_client->get($url);
 
             $response->body = $guzzle_response->getBody()->getContents();

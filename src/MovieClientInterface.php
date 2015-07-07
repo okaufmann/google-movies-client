@@ -15,8 +15,7 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByMovieId($mid, $near, $lang = 'en');
-
+    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $dateoffset = null);
 
     /**
      * Returns Showtimes for a specific Theater
@@ -27,8 +26,7 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $near, $lang = 'en');
-
+    public function getShowtimesByTheaterId($tid, $near, $lang = 'en', $dateoffset = null);
 
     /**
      * Returns Theaters near a location
@@ -39,7 +37,7 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getTheatersNear($near, $lang = 'en');
+    public function getTheatersNear($near, $lang = 'en', $dateoffset = null);
 
     /**
      * Returns Showtimes near a location
@@ -50,7 +48,7 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesNear($near, $lang = 'en');
+    public function getShowtimesNear($near, $lang = 'en', $dateoffset = null);
 
     /**
      * Returns Showtimes found by a search for a movie title
@@ -62,6 +60,6 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en');
+    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateoffset = null);
 
 }

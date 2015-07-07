@@ -68,6 +68,7 @@ class ShowtimeParser extends ParserAbstract
         }
 
         foreach ($movieDivs as $i => $contents) {
+
             $movieDiv = new Crawler($contents);
 
             $resultItemParser = new ResultItemParser($movieDiv);
@@ -76,6 +77,15 @@ class ShowtimeParser extends ParserAbstract
             if ($movie == null) {
                 break;
             }
+
+            $movieInfoLinks = $movieDiv->filter(".info a");
+            if (count($movieInfoLinks) > 0) {
+                $imdbLink = $movieInfoLinks->last();
+                if ($imdbLink != null) {
+                    $movie->setImdbLink(ParseHelper::getParamFromLink($imdbLink->attr("href"), "q"));
+                }
+            }
+
             $movie->setShowtimeInfo($this->parseShowtimeInfo($movieDiv));
 
             $movies[] = $movie;
@@ -84,7 +94,8 @@ class ShowtimeParser extends ParserAbstract
         return $movies;
     }
 
-    private function parseTheaters()
+    private
+    function parseTheaters()
     {
         $theaters = [];
 
@@ -114,7 +125,8 @@ class ShowtimeParser extends ParserAbstract
     }
 
 
-    private function parseShowtimeInfo(Crawler $theaterDiv)
+    private
+    function parseShowtimeInfo(Crawler $theaterDiv)
     {
         $showTimes = [];
         $showtimeSpans = $theaterDiv->filter(".times");
@@ -133,7 +145,8 @@ class ShowtimeParser extends ParserAbstract
      * @param $matches
      * @return ShowtimeInfo
      */
-    private function parseShowtime($timeSpanContent)
+    private
+    function parseShowtime($timeSpanContent)
     {
         $showtime = new ShowtimeInfo();
 

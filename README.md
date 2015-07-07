@@ -36,11 +36,9 @@ var_dump($result);
 
 ### Todo's
 
- - Parse dates not show in the date link list as well
+ - Parse and Include purchase Links where possible (movietickets.com)
  - Multipage Search Result parsing
- - improve performance
  - Write Tests
- - Refactoring
 
 License
 ----

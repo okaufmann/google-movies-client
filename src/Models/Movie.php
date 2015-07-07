@@ -23,7 +23,6 @@ class Movie
         }
     }
 
-
     /**
      * @return mixed
      */
