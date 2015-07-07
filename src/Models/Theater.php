@@ -8,6 +8,8 @@ class Theater
     private $name;
     private $address;
     private $city;
+    private $state;
+    private $country;
 
     /**
      * @var ShowtimeInfo
@@ -17,17 +19,23 @@ class Theater
     public function __construct(ResultItem $resultItem = null)
     {
         if ($resultItem != null) {
-            $this->setName($resultItem->getName());
-            
-
-            $adressParts = explode(', ', $resultItem->getInfo());
-
-            $this->setAddress($adressParts[0]);
-            $this->setCity($adressParts[1]);
-
-            //TODO: Parse more secure and parse country
-
             $this->setTid($resultItem->getId());
+            $this->setName($resultItem->getName());
+
+            $addressParts = explode(', ', $resultItem->getInfo());
+
+            //TODO: Try Parse full address with phone
+
+            $this->setAddress($addressParts[0]);
+            $this->setCity($addressParts[1]);
+            if (count($addressParts) == 4) {
+                $this->setState($addressParts[2]);
+                $cityParts = explode(" - ", $addressParts[3]);
+                $this->setCountry($cityParts[0]);
+            } else if (count($addressParts) == 3) {
+                $cityParts = explode(" - ", $addressParts[2]);
+                $this->setCountry($cityParts[0]);
+            }
         }
     }
 
@@ -94,7 +102,7 @@ class Theater
     {
         $this->showtimeInfo = $showtimeInfo;
     }
-    
+
     /**
      * @return mixed $address
      */
@@ -109,5 +117,37 @@ class Theater
     public function setCity($city)
     {
         $this->city = $city;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param mixed $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
     }
 }

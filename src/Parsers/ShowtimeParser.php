@@ -56,7 +56,11 @@ class ShowtimeParser extends ParserAbstract
         return null;
     }
 
-    private function parseMovies()
+    /**
+     * @param bool $includeShowtimes
+     * @return array|null
+     */
+    public function parseMovies($includeShowtimes = true)
     {
         $movies = [];
 
@@ -67,15 +71,13 @@ class ShowtimeParser extends ParserAbstract
             return null;
         }
 
-        foreach ($movieDivs as $i => $contents) {
-
-            $movieDiv = new Crawler($contents);
+        $movies = $movieDivs->each(function (Crawler $movieDiv, $i) use ($includeShowtimes) {
 
             $resultItemParser = new ResultItemParser($movieDiv);
 
             $movie = $resultItemParser->parseResultMovieItem();
             if ($movie == null) {
-                break;
+                return;
             }
 
             $movieInfoLinks = $movieDiv->filter(".info a");
@@ -86,16 +88,17 @@ class ShowtimeParser extends ParserAbstract
                 }
             }
 
-            $movie->setShowtimeInfo($this->parseShowtimeInfo($movieDiv));
+            if ($includeShowtimes) {
+                $movie->setShowtimeInfo($this->parseShowtimeInfo($movieDiv));
+            }
 
-            $movies[] = $movie;
-        }
+            return $movie;
+        });
 
         return $movies;
     }
 
-    private
-    function parseTheaters()
+    public function parseTheaters($includeShowtimes = true)
     {
         $theaters = [];
 
@@ -116,7 +119,10 @@ class ShowtimeParser extends ParserAbstract
             if ($theater == null) {
                 break;
             }
-            $theater->setShowtimeInfo($this->parseShowtimeInfo($theaterDiv));
+
+            if ($includeShowtimes) {
+                $theater->setShowtimeInfo($this->parseShowtimeInfo($theaterDiv));
+            }
 
             $theaters[] = $theater;
         }
@@ -125,19 +131,11 @@ class ShowtimeParser extends ParserAbstract
     }
 
 
-    private
-    function parseShowtimeInfo(Crawler $theaterDiv)
+    private function parseShowtimeInfo(Crawler $resultDiv)
     {
-        $showTimes = [];
-        $showtimeSpans = $theaterDiv->filter(".times");
-        foreach ($showtimeSpans as $j => $timeSpanContent) {
+        $showtimeSpans = $resultDiv->filter(".times")->first();
 
-            $showtime = $this->parseShowtime($timeSpanContent);
-
-            $showTimes[] = $showtime;
-        }
-
-        return $showTimes;
+        return $this->parseShowtime($showtimeSpans);
     }
 
     /**
@@ -145,30 +143,46 @@ class ShowtimeParser extends ParserAbstract
      * @param $matches
      * @return ShowtimeInfo
      */
-    private
-    function parseShowtime($timeSpanContent)
+    private function parseShowtime(Crawler $timeSpan)
     {
         $showtime = new ShowtimeInfo();
 
-        $timeSpan = new Crawler($timeSpanContent);
-        $texts = explode(" ", $timeSpan->text());
+        $texts = explode(" ", str_replace("&nbsp", "", $timeSpan->text()));
 
-        $showtime->setInfo($texts[0]);
+        if ($this->getTime($texts[0]) == null) {
+            $showtime->setInfo($texts[0]);
+        }
 
         $times = [];
         foreach ($texts as $text) {
             $time = trim(html_entity_decode($text));
-            $time = str_replace("&nbsp", "", $time);
+            $time = $this->getTime($time);
 
-            preg_match("/[0-9][0-9]:[0-9][0-9]/", $time, $matches);
-            if (count($matches) > 0) {
-                $times[] = $matches[0];
+            if (!empty($time)) {
+                $times[] = $time;
             }
         }
 
         $showtime->setTimes($times);
 
         return $showtime;
+    }
+
+    private function getTime($input)
+    {
+        //test 12 h format
+        preg_match("/(1[012]|[1-9]):[0-5][0-9](\\s)?(?i)(am|pm)/", $input, $matches);
+        if (count($matches) > 0) {
+            return $matches[0];
+        }
+
+        //test 24 h format
+        preg_match("/([01]?[0-9]|2[0-3]):[0-5][0-9]/", $input, $matches);
+        if (count($matches) > 0) {
+            return $matches[0];
+        }
+
+        return null;
     }
 }
 

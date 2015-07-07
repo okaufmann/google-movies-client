@@ -8,6 +8,7 @@ class Movie
     private $name;
     private $info;
     private $imdbLink;
+    private $theaterShowtimeDays;
 
     /**
      * @var ShowtimeInfo
@@ -117,5 +118,21 @@ class Movie
     public function setShowtimeInfo($showtimeInfo)
     {
         $this->showtimeInfo = $showtimeInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTheaterShowtimeDays()
+    {
+        return $this->theaterShowtimeDays;
+    }
+
+    /**
+     * @param array $theaterShowtimeDays
+     */
+    public function setTheaterShowtimeDays($theaterShowtimeDays)
+    {
+        $this->theaterShowtimeDays = $theaterShowtimeDays;
     }
 }

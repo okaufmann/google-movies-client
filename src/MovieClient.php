@@ -5,15 +5,19 @@ namespace MightyCode\GoogleMovieClient;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
+use MightyCode\GoogleMovieClient\Helpers\ParseHelper;
 use MightyCode\GoogleMovieClient\Models\DataResponse;
+use MightyCode\GoogleMovieClient\Models\Movie;
 use MightyCode\GoogleMovieClient\Parsers\ShowtimeParser;
+use MightyCode\GoogleMovieClient\Parsers\TheaterParser;
+use Symfony\Component\DomCrawler\Crawler;
 
 class MovieClient implements MovieClientInterface
 {
 
     private $_baseUrl = "http://www.google.com/movies";
 
-    private $_dev_mode = true;
+    private $_dev_mode = false;
 
     //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
     private $_userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
@@ -31,17 +35,15 @@ class MovieClient implements MovieClientInterface
      * @param string $mid
      * @param string $near
      * @param string $lang
-     * @param int $date
-     * @param int $start
      * @return array
      */
-    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $dateoffset = 0)
+    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $dateOffset = 0)
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, $mid, null, $lang, $dateoffset);
+        $dataResponse = $this->getData($near, null, $mid, null, $lang, $dateOffset);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -51,7 +53,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByMovie($dayDate->copy());
             $days[] = $result;
 
-            for ($i = $dateoffset + 1; $i < 20; $i++) {
+            for ($i = $dateOffset + 1; $i < 20; $i++) {
                 $dataResponse = $this->getData($near, null, $mid, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -72,18 +74,18 @@ class MovieClient implements MovieClientInterface
      * Returns Showtimes for a specific Theater
      *
      * @param string $tid
+     * @param $near
      * @param string $lang
-     * @param int $date
-     * @param int $start
+     * @param int $dateOffset
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $near, $lang = 'en', $dateoffset = 0)
+    public function getShowtimesByTheaterId($tid, $near, $lang = 'en', $dateOffset = 0)
     {
         //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, null, $tid, $lang, $dateoffset);
+        $dataResponse = $this->getData($near, null, null, $tid, $lang, $dateOffset);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -94,7 +96,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByTheater($dayDate);
             $days[] = $result;
 
-            for ($i = $dateoffset + 1; $i < 20; $i++) {
+            for ($i = $dateOffset + 1; $i < 20; $i++) {
                 $dataResponse = $this->getData($near, null, null, $tid, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -116,32 +118,38 @@ class MovieClient implements MovieClientInterface
      *
      * @param string $near
      * @param string $lang
-     * @param int $date
-     * @param int $start
      * @return mixed
      */
-    public function getTheatersNear($near, $lang = 'en', $dateoffset = null)
+    public function getTheatersNear($near, $lang = 'en')
     {
         //http://google.com/movies?near=thun&hl=de
         //http://google.com/movies?near=thun&hl=de&start=10 (next page)
 
-        // TODO: Implement getTheatersNear() method.
-    }
+        $dataResponse = $this->getData($near, null, null, null, $lang);
+        $theaters = [];
 
-    /**
-     * Returns Showtimes near a location
-     *
-     * @param string $near
-     * @param string $lang
-     * @param int $date
-     * @param int $start
-     * @return mixed
-     */
-    public function getShowtimesNear($near, $lang = 'en', $dateoffset = null)
-    {
-        //http://google.com/movies?near=Interlaken&hl=de
-        //http://google.com/movies?near=Interlaken&hl=de&start=10
-        // TODO: Implement getShowtimesNear() method.
+        if ($dataResponse) {
+            $crawler = $dataResponse->getCrawler();
+            $parser = new ShowtimeParser($crawler);
+            $theaters = $parser->parseTheaters(false);
+
+            $navBarPageLinks = $crawler->filter("#navbar a");
+            $furtherPages = $navBarPageLinks->each(function (Crawler $node, $i) {
+                return $temp = ParseHelper::getParamFromLink($node->attr("href"), "start");
+            });
+            $furtherPages = array_unique($furtherPages);
+
+            foreach ($furtherPages as $page) {
+                $dataResponse = $this->getData($near, null, null, null, $lang, null, $page);
+                if ($dataResponse) {
+                    $parser = new ShowtimeParser($crawler);
+                    $theaters = array_merge($parser->parseTheaters(false), $theaters);
+                }
+            }
+        }
+
+        return $theaters;
+
     }
 
     /**
@@ -150,16 +158,71 @@ class MovieClient implements MovieClientInterface
      * @param string $near
      * @param string $name
      * @param string $lang
-     * @param int $date
-     * @param int $start
+     * @param null $dateOffset
      * @return mixed
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateoffset = null)
+    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateOffset = null)
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
-        // TODO: Implement queryShowtimesByMovieTitleNear() method.
+
+        $dataResponse = $this->getData($near, $name, null, null, $lang);
+        $days = array();
+        if ($dataResponse) {
+            $dayDate = Carbon::now();
+            $dayDate->setTime(0, 0, 0);
+            $crawler = $dataResponse->getCrawler();
+            $parser = new ShowtimeParser($crawler);
+            $movies = $parser->parseMovies(false);
+
+            //TODO: Replace by handeles multiple movies in results!
+            /* @var Movie $movie */
+            $movie = $movies[0];
+
+            if (count($movies) > 1) {
+                throw new \Exception("more than one movie in search results are not supported yet!");
+            } else {
+                //Dirty but didn't found better way...
+                $midHref = $crawler->filter("#left_nav a")->first()->attr("href");
+                $movie->setMid(ParseHelper::getParamFromLink($midHref, "mid"));
+            }
+
+            $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
+
+            for ($i = $dateOffset + 1; $i < 20; $i++) {
+                $dataResponse = $this->getData($near, $name, null, null, $lang, $i);
+
+                $parser = new ShowtimeParser($dataResponse->getCrawler());
+                $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
+
+                if ($result == null) {
+                    break;
+                } else {
+                    $days[] = $result;
+                }
+            }
+        }
+
+        $movie->setTheaterShowtimeDays($days);
+
+        return $movie;
     }
 
+    /**
+     * Returns Showtimes near a location
+     *
+     * @param string $near
+     * @param string $lang
+     * @param null $dateOffset
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getShowtimesNear($near, $lang = 'en', $dateOffset = null)
+    {
+        //http://google.com/movies?near=Interlaken&hl=de
+        //http://google.com/movies?near=Interlaken&hl=de&start=10
+        // TODO: Implement getShowtimesNear() method.
+        throw new \Exception("Not implemented yet");
+    }
 
     /**
      * Prepares the http Client
@@ -182,7 +245,8 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return DataResponse
      */
-    private function getData($near = null, $search = null, $mid = null, $tid = null, $language = "en", $date = null, $start = null)
+    private
+    function getData($near = null, $search = null, $mid = null, $tid = null, $language = "en", $date = null, $start = null)
     {
         $params = array(
             'near' => $near,

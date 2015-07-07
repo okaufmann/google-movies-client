@@ -37,7 +37,7 @@ class ResultItemParser extends ParserAbstract
 
     public function parseResultTheaterItem()
     {
-        $resultItem = $this->parseResultItem($this->crawler, 'tid', '.address');
+        $resultItem = $this->parseResultItem($this->crawler, 'tid', '.address, .info');
 
         if ($resultItem == null) {
             return null;
@@ -49,16 +49,16 @@ class ResultItemParser extends ParserAbstract
     }
 
     /**
-     * @param Crawler $theaterDiv
+     * @param Crawler $resultItemDiv
      * @param $paramName
      * @param $className
      * @return ResultItem|null
      */
-    private function parseResultItem(Crawler $theaterDiv, $paramName, $className)
+    private function parseResultItem(Crawler $resultItemDiv, $paramName, $className)
     {
-        $theaterHref = $theaterDiv->filter(".name a")->first();
+        $resultItemA = $resultItemDiv->filter("h2 a, .name a")->first();
 
-        $url = $theaterHref->attr("href");
+        $url = $resultItemA->attr("href");
 
         if (!$url) {
             return null;
@@ -67,8 +67,8 @@ class ResultItemParser extends ParserAbstract
         $resultItem = new ResultItem();
 
         $resultItem->setId(ParseHelper::getParamFromLink($url, $paramName));
-        $resultItem->setName($theaterHref->text());
-        $resultItem->setInfo(strip_tags($theaterDiv->filter($className)->first()->text()));
+        $resultItem->setName($resultItemA->text());
+        $resultItem->setInfo(strip_tags($resultItemDiv->filter($className)->first()->text()));
 
         return $resultItem;
     }
