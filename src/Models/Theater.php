@@ -8,7 +8,19 @@ class Theater
     private $name;
     private $address;
 
-    private $showtimeInfo = [];
+    /**
+     * @var ShowtimeInfo
+     */
+    private $showtimeInfo;
+
+    public function __construct(ResultItem $resultItem = null)
+    {
+        if ($resultItem != null) {
+            $this->setName($resultItem->getName());
+            $this->setAddress($resultItem->getInfo());
+            $this->setTid($resultItem->getId());
+        }
+    }
 
     /**
      * @return mixed
@@ -59,7 +71,7 @@ class Theater
     }
 
     /**
-     * @return array
+     * @return ShowtimeInfo
      */
     public function getShowtimeInfo()
     {
@@ -67,7 +79,7 @@ class Theater
     }
 
     /**
-     * @param array $showtimes
+     * @param ShowtimeInfo $showtimeInfo
      */
     public function setShowtimeInfo($showtimeInfo)
     {

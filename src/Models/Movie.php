@@ -9,7 +9,20 @@ class Movie
     private $info;
     private $imdbLink;
 
-    private $showtimeDays = [];
+    /**
+     * @var ShowtimeInfo
+     */
+    private $showtimeInfo;
+
+    public function __construct(ResultItem $resultItem = null)
+    {
+        if ($resultItem != null) {
+            $this->setName($resultItem->getName());
+            $this->setInfo($resultItem->getInfo());
+            $this->setMid($resultItem->getId());
+        }
+    }
+
 
     /**
      * @return mixed
@@ -89,5 +102,21 @@ class Movie
     public function setShowtimeDays($showtimeDays)
     {
         $this->showtimeDays = $showtimeDays;
+    }
+
+    /**
+     * @return ShowtimeInfo
+     */
+    public function getShowtimeInfo()
+    {
+        return $this->showtimeInfo;
+    }
+
+    /**
+     * @param ShowtimeInfo $showtimeInfo
+     */
+    public function setShowtimeInfo($showtimeInfo)
+    {
+        $this->showtimeInfo = $showtimeInfo;
     }
 }

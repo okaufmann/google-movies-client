@@ -5,7 +5,7 @@ namespace MightyCode\GoogleMovieClient;
 use MightyCode\GoogleMovieClient\Models\DataResponse;
 use MightyCode\GoogleMovieClient\Models\Movie;
 use MightyCode\GoogleMovieClient\Models\ShowtimeInfo;
-use MightyCode\GoogleMovieClient\Models\ShowtimeDay;
+use MightyCode\GoogleMovieClient\Models\TheaterShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\Theater;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -127,11 +127,11 @@ class MovieClient_old
      * extract the showtimes of a parsed movie
      * @param $parsedMovie
      * @param $objDateTime
-     * @return ShowtimeDay
+     * @return TheaterShowtimeDay
      */
     private function buildShowtimeDay($parsedMovie, $objDateTime)
     {
-        $showtimeDay = new ShowtimeDay();
+        $showtimeDay = new TheaterShowtimeDay();
         $showtimeDay->date = $objDateTime->format("Y-m-d");
         $showtimeDay->theaters = $parsedMovie->theaters;
 

@@ -1,12 +1,19 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: okaufmann
+ * Date: 07.07.2015
+ * Time: 06:48
+ */
 
 namespace MightyCode\GoogleMovieClient\Models;
 
-class ShowtimeDay
+
+class MovieShowtimeDay
 {
     private $date;
-    
-    private $theaters = [];
+
+    private $movies = [];
 
     /**
      * @return mixed
@@ -27,16 +34,16 @@ class ShowtimeDay
     /**
      * @return array
      */
-    public function getTheaters()
+    public function getMovies()
     {
-        return $this->theaters;
+        return $this->movies;
     }
 
     /**
-     * @param array $theaters
+     * @param array $movies
      */
-    public function setTheaters($theaters)
+    public function setMovies($movies)
     {
-        $this->theaters = $theaters;
+        $this->movies = $movies;
     }
 }

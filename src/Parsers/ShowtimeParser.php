@@ -3,18 +3,14 @@ namespace MightyCode\GoogleMovieClient\Parsers;
 
 use Carbon\Carbon;
 use MightyCode\GoogleMovieClient\Helpers\ParseHelper;
+use MightyCode\GoogleMovieClient\Models\MovieShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\ShowtimeInfo;
-use MightyCode\GoogleMovieClient\Models\ShowtimeDay;
+use MightyCode\GoogleMovieClient\Models\TheaterShowtimeDay;
 use MightyCode\GoogleMovieClient\Models\Theater;
 use Symfony\Component\DomCrawler\Crawler;
 
-class ShowtimeParser
+class ShowtimeParser extends ParserAbstract
 {
-    /**
-     * @var Crawler
-     */
-    private $crawler;
-
     /**
      * @param Crawler $crawler
      */
@@ -24,39 +20,88 @@ class ShowtimeParser
     }
 
     /**
-     * Returns all Days
+     * Returns all Days of Showtimes by a Movie
      *
-     * @return array
+     * @param Carbon $date
+     * @return TheaterShowtimeDay|null
      */
-    public function getShowtimeDay(Carbon $date)
+    public function getShowtimeDayByMovie(Carbon $date)
     {
-        $showDay = new ShowtimeDay();
+        $showDay = new TheaterShowtimeDay();
         $theaters = $this->parseTheaters();
         if (count($theaters) > 0) {
             $showDay->setTheaters($theaters);
-            $showDay->setDate($date->copy());
+            $showDay->setDate($date);
             return $showDay;
         }
 
         return null;
     }
 
-    private function parseTheaters()
+    /**
+     * Returns all Days of Showtimes by a Theater
+     * @param Carbon $date
+     * @return MovieShowtimeDay|null
+     */
+    public function getShowtimeDayByTheater(Carbon $date)
     {
-        $theaters = [];
+        $showDay = new MovieShowtimeDay();
+        $movies = $this->parseMovies();
+        if (count($movies) > 0) {
+            $showDay->setMovies($movies);
+            $showDay->setDate($date);
+            return $showDay;
+        }
 
-        $theatersDiv = $this->crawler->filter('#movie_results .theater');
+        return null;
+    }
 
-        $count = $theatersDiv->count();
+    private function parseMovies()
+    {
+        $movies = [];
+
+        $movieDivs = $this->crawler->filter('#movie_results .movie');
+
+        $count = $movieDivs->count();
         if ($count == 0) {
             return null;
         }
 
-        foreach ($theatersDiv as $i => $contents) {
+        foreach ($movieDivs as $i => $contents) {
+            $movieDiv = new Crawler($contents);
+
+            $resultItemParser = new ResultItemParser($movieDiv);
+
+            $movie = $resultItemParser->parseResultMovieItem();
+            if ($movie == null) {
+                break;
+            }
+            $movie->setShowtimeInfo($this->parseShowtimeInfo($movieDiv));
+
+            $movies[] = $movie;
+        }
+
+        return $movies;
+    }
+
+    private function parseTheaters()
+    {
+        $theaters = [];
+
+        $theatersDivs = $this->crawler->filter('#movie_results .theater');
+
+        $count = $theatersDivs->count();
+        if ($count == 0) {
+            return null;
+        }
+
+        foreach ($theatersDivs as $i => $contents) {
 
             $theaterDiv = new Crawler($contents);
 
-            $theater = $this->parseTheater($theaterDiv);
+            $resultItemParser = new ResultItemParser($theaterDiv);
+
+            $theater = $resultItemParser->parseResultTheaterItem();
             if ($theater == null) {
                 break;
             }
@@ -68,23 +113,6 @@ class ShowtimeParser
         return $theaters;
     }
 
-    private function parseTheater(Crawler $theaterDiv)
-    {
-        $theaterHref = $theaterDiv->filter(".name a")->first();
-
-        $url = $theaterHref->attr("href");
-
-        if (!$url) {
-            return null;
-        }
-
-        $theater = new Theater();
-        $theater->setTid(ParseHelper::getParamFromLink($url, "tid"));
-        $theater->setName($theaterHref->text());
-        $theater->setAddress(strip_tags($theaterDiv->filter(".address")->first()->text()));
-
-        return $theater;
-    }
 
     private function parseShowtimeInfo(Crawler $theaterDiv)
     {
@@ -98,27 +126,6 @@ class ShowtimeParser
         }
 
         return $showTimes;
-    }
-
-    /**
-     * @return Crawler
-     */
-    public function getCrawler()
-    {
-        return $this->crawler;
-    }
-
-    /**
-     * @param Crawler $crawler
-     */
-    public function setCrawler($crawler)
-    {
-        $this->crawler = $crawler;
-    }
-
-    private function parseMovies()
-    {
-        return $this->crawler->filter('#movie_results .movie');
     }
 
     /**
@@ -151,3 +158,4 @@ class ShowtimeParser
         return $showtime;
     }
 }
+

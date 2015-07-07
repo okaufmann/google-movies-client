@@ -28,25 +28,27 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return array
      */
-    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $date = null, $start = null)
+    public function getShowtimesByMovieId($mid, $near, $lang = 'en')
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
 
-        $dataResponse = $this->getData($near, null, $mid, null, $lang, $date, $start);
+        //TODO: Add multiple result pages parsing
+
+        $dataResponse = $this->getData($near, null, $mid, null, $lang);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
 
             $parser = new ShowtimeParser($dataResponse->getCrawler());
-            $result = $parser->getShowtimeDay($dayDate);
+            $result = $parser->getShowtimeDayByMovie($dayDate->copy());
             $days[] = $result;
 
             for ($i = 1; $i < 20; $i++) {
-                $newResponse = $this->getData($near, null, $mid, null, $lang, $i, $start);
+                $newResponse = $this->getData($near, null, $mid, null, $lang, $i);
 
                 $parser = new ShowtimeParser($newResponse->getCrawler());
-                $result = $parser->getShowtimeDay($dayDate->addDay(1));
+                $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
 
                 if ($result == null) {
                     break;
@@ -68,10 +70,25 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $lang = 'en', $date = 0, $start = 0)
+    public function getShowtimesByTheaterId($tid, $lang = 'en')
     {
-        //http://google.com/movies?hl=de&tid=eef3a3f57d224cf7
-        // TODO: Implement getShowtimesByTheaterId() method.
+        //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
+
+        //TODO: Add multiple result pages parsing
+
+        $dataResponse = $this->getData(null, null, null, $tid, $lang);
+        $days = array();
+        if ($dataResponse) {
+            $dayDate = Carbon::now();
+            $dayDate->setTime(0, 0, 0);
+
+            $parser = new ShowtimeParser($dataResponse->getCrawler());
+
+            $result = $parser->getShowtimeDayByTheater($dayDate);
+            $days[] = $result;
+        }
+
+        return $days;
     }
 
     /**
@@ -83,7 +100,7 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getTheatersNear($near, $lang = 'en', $date = 0, $start = 0)
+    public function getTheatersNear($near, $lang = 'en')
     {
         //http://google.com/movies?near=thun&hl=de
         //http://google.com/movies?near=thun&hl=de&start=10 (next page)
@@ -100,7 +117,7 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesNear($near, $lang = 'en', $date = 0, $start = 0)
+    public function getShowtimesNear($near, $lang = 'en')
     {
         //http://google.com/movies?near=Interlaken&hl=de
         //http://google.com/movies?near=Interlaken&hl=de&start=10
@@ -117,7 +134,7 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $date = 0, $start = 0)
+    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en')
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
         // TODO: Implement queryShowtimesByMovieTitleNear() method.
