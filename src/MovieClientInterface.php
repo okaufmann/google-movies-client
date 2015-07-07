@@ -27,7 +27,7 @@ interface MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $lang = 'en');
+    public function getShowtimesByTheaterId($tid, $near, $lang = 'en');
 
 
     /**

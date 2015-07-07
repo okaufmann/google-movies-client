@@ -7,6 +7,7 @@ class Theater
     private $tid;
     private $name;
     private $address;
+    private $city;
 
     /**
      * @var ShowtimeInfo
@@ -17,7 +18,15 @@ class Theater
     {
         if ($resultItem != null) {
             $this->setName($resultItem->getName());
-            $this->setAddress($resultItem->getInfo());
+            
+
+            $adressParts = explode(', ', $resultItem->getInfo());
+
+            $this->setAddress($adressParts[0]);
+            $this->setCity($adressParts[1]);
+
+            //TODO: Parse more secure and parse country
+
             $this->setTid($resultItem->getId());
         }
     }
@@ -84,5 +93,21 @@ class Theater
     public function setShowtimeInfo($showtimeInfo)
     {
         $this->showtimeInfo = $showtimeInfo;
+    }
+    
+    /**
+     * @return mixed $address
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param mixed $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
     }
 }

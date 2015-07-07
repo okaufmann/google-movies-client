@@ -18,6 +18,12 @@ class MovieClient implements MovieClientInterface
     //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
     private $_userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
 
+    private $http_client;
+
+    public function __construct(){
+        $this->constructHttpClient();
+    }
+
     /**
      *  Returns Showtimes for a specific movie near a location
      *
@@ -45,9 +51,9 @@ class MovieClient implements MovieClientInterface
             $days[] = $result;
 
             for ($i = 1; $i < 20; $i++) {
-                $newResponse = $this->getData($near, null, $mid, null, $lang, $i);
+                $dataResponse = $this->getData($near, null, $mid, null, $lang, $i);
 
-                $parser = new ShowtimeParser($newResponse->getCrawler());
+                $parser = new ShowtimeParser($dataResponse->getCrawler());
                 $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
 
                 if ($result == null) {
@@ -70,13 +76,13 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $lang = 'en')
+    public function getShowtimesByTheaterId($tid, $near, $lang = 'en')
     {
         //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData(null, null, null, $tid, $lang);
+        $dataResponse = $this->getData($near, null, null, $tid, $lang);
         $days = array();
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -86,6 +92,19 @@ class MovieClient implements MovieClientInterface
 
             $result = $parser->getShowtimeDayByTheater($dayDate);
             $days[] = $result;
+
+            for ($i = 1; $i < 20; $i++) {
+                $dataResponse = $this->getData($near, null, null, $tid, $lang, $i);
+
+                $parser = new ShowtimeParser($dataResponse->getCrawler());
+                $result = $parser->getShowtimeDayByTheater($dayDate->addDay(1)->copy());
+
+                if ($result == null) {
+                    break;
+                } else {
+                    $days[] = $result;
+                }
+            }
         }
 
         return $days;
@@ -140,6 +159,11 @@ class MovieClient implements MovieClientInterface
         // TODO: Implement queryShowtimesByMovieTitleNear() method.
     }
 
+    private function constructHttpClient(){
+        $this->http_client = new Client();
+        $this->http_client->setDefaultOption('headers', ['User-Agent' => $this->_userAgent]);
+    }
+
     /**
      * get the requested html from google with the passed parameters
      *
@@ -170,12 +194,8 @@ class MovieClient implements MovieClientInterface
             $response->body = file_get_contents($url);
         } else {
             $url = $this->_baseUrl . '?' . http_build_query($params);
-            $client = new Client();
-            $request = $client->createRequest("GET", $url);
-            $request->setHeader('User-Agent', $this->_userAgent);
-
-            $guzzle_response = $client->send($request);
-
+            
+            $guzzle_response = $this->http_client->get($url);
 
             $response->body = $guzzle_response->getBody()->getContents();
             $response->code = $guzzle_response->getStatusCode();

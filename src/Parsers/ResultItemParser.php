@@ -37,7 +37,7 @@ class ResultItemParser extends ParserAbstract
 
     public function parseResultTheaterItem()
     {
-        $resultItem = $this->parseResultItem($this->crawler, 'mid', '.address');
+        $resultItem = $this->parseResultItem($this->crawler, 'tid', '.address');
 
         if ($resultItem == null) {
             return null;
