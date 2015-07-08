@@ -1,7 +1,7 @@
 # Google Movie Client
 [![StyleCI](https://styleci.io/repos/30374769/shield)](https://styleci.io/repos/30374769)
-[![GitHub license](https://img.shields.io/github/license/strebl/pi.strebl.ch.svg?style=flat-square)](https://github.com/strebl/pi.strebl.ch/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/strebl/pi.strebl.ch.svg?style=flat-square)](https://github.com/strebl/pi.strebl.ch/releases)
+[![GitHub license](https://img.shields.io/github/license/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/releases)
 
 Extended Client to fetch data from [http://google.com/movies](http://google.com/movies) in an object oriented way.
 
