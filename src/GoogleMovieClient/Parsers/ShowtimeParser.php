@@ -163,7 +163,7 @@ class ShowtimeParser extends ParserAbstract
             $time = trim(html_entity_decode($text));
             $time = $this->getTime($time);
 
-            if (!empty($time)) {
+            if ( ! empty($time)) {
                 $times[] = $time;
             }
         }
