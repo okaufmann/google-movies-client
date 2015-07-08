@@ -35,6 +35,7 @@ $fixers = [
     'no_empty_lines_after_phpdocs',
     'object_operator',
     'operators_spaces',
+    'phpdoc_params',
     'phpdoc_indent',
     'phpdoc_no_access',
     'phpdoc_no_package',
@@ -63,7 +64,6 @@ $fixers = [
     'align_double_arrow',
     'multiline_spaces_before_semicolon',
     'ordered_use',
-    'phpdoc_params',
     'phpdoc_order',
     'short_array_syntax'
 ];
