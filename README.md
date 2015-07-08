@@ -15,14 +15,14 @@ Extended Client to fetch data from [http://google.com/movies](http://google.com/
 With [composer](https://getcomposer.org/)
 
 ```sh
-$ composer require mighty-code/google-movies-client:dev-master
+$ composer require okaufmann/google-movies-client:dev-master
 ```
 
 or
 
 ```json
 "require": {
-    "mighty-code/google-movies-client": "dev-master"
+    "okaufmann/google-movies-client": "dev-master"
 }
 ```
 ### Use it in your code
