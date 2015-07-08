@@ -6,7 +6,7 @@
  * Time: 07:13
  */
 
-namespace MightyCode\GoogleMovieClient\Models;
+namespace GoogleMovieClient\Models;
 
 
 class ResultItem

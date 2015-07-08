@@ -1,6 +1,6 @@
 <?php
 
-namespace MightyCode\GoogleMovieClient\Models;
+namespace GoogleMovieClient\Models;
 
 class Theater
 {

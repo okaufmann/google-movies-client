@@ -1,12 +1,12 @@
 <?php
-namespace MightyCode\GoogleMovieClient\Parsers;
+namespace GoogleMovieClient\Parsers;
 
 use Carbon\Carbon;
-use MightyCode\GoogleMovieClient\Helpers\ParseHelper;
-use MightyCode\GoogleMovieClient\Models\MovieShowtimeDay;
-use MightyCode\GoogleMovieClient\Models\ShowtimeInfo;
-use MightyCode\GoogleMovieClient\Models\TheaterShowtimeDay;
-use MightyCode\GoogleMovieClient\Models\Theater;
+use GoogleMovieClient\Helpers\ParseHelper;
+use GoogleMovieClient\Models\MovieShowtimeDay;
+use GoogleMovieClient\Models\ShowtimeInfo;
+use GoogleMovieClient\Models\TheaterShowtimeDay;
+use GoogleMovieClient\Models\Theater;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ShowtimeParser extends ParserAbstract

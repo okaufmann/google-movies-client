@@ -26,7 +26,7 @@
     }
   ],
   "autoload": {
-    "psr-4": {"MightyCode\\GoogleMovieClient\\": "src/"}
+    "psr-4": {"GoogleMovieClient\\": "src/GoogleMovieClient/"}
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

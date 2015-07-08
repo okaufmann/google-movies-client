@@ -1,7 +1,7 @@
 <?php
 require_once 'vendor/autoload.php';
 
-use MightyCode\GoogleMovieClient\MovieClient;
+use GoogleMovieClient\MovieClient;
 
 
 $test = new MovieClient();

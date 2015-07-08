@@ -6,7 +6,7 @@
  * Time: 06:48
  */
 
-namespace MightyCode\GoogleMovieClient\Models;
+namespace GoogleMovieClient\Models;
 
 
 class MovieShowtimeDay

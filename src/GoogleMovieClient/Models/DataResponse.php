@@ -1,6 +1,6 @@
 <?php
 
-namespace MightyCode\GoogleMovieClient\Models;
+namespace GoogleMovieClient\Models;
 
 use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\DomCrawler\Crawler;

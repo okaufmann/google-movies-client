@@ -6,7 +6,7 @@
  * Time: 21:49
  */
 
-namespace MightyCode\GoogleMovieClient\Helpers;
+namespace GoogleMovieClient\Helpers;
 
 
 class ParseHelper

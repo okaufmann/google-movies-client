@@ -27,7 +27,7 @@ or
 ### Use it in your code
 
 ```php
-use MightyCode\GoogleMovieClient\Client;
+use GoogleMovieClient\Client;
 
 $client = new Client();
 $result = $client->findShowtimesByMovieTitle("New York","American Sniper","en");

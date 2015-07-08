@@ -6,13 +6,13 @@
  * Time: 07:06
  */
 
-namespace MightyCode\GoogleMovieClient\Parsers;
+namespace GoogleMovieClient\Parsers;
 
 
-use MightyCode\GoogleMovieClient\Helpers\ParseHelper;
-use MightyCode\GoogleMovieClient\Models\Movie;
-use MightyCode\GoogleMovieClient\Models\ResultItem;
-use MightyCode\GoogleMovieClient\Models\Theater;
+use GoogleMovieClient\Helpers\ParseHelper;
+use GoogleMovieClient\Models\Movie;
+use GoogleMovieClient\Models\ResultItem;
+use GoogleMovieClient\Models\Theater;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ResultItemParser extends ParserAbstract

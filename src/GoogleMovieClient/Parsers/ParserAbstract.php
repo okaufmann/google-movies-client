@@ -6,7 +6,7 @@
  * Time: 07:08
  */
 
-namespace MightyCode\GoogleMovieClient\Parsers;
+namespace GoogleMovieClient\Parsers;
 
 use Symfony\Component\DomCrawler\Crawler;
 

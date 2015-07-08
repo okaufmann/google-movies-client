@@ -1,15 +1,15 @@
 <?php
 
-namespace MightyCode\GoogleMovieClient;
+namespace GoogleMovieClient;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
-use MightyCode\GoogleMovieClient\Helpers\ParseHelper;
-use MightyCode\GoogleMovieClient\Models\DataResponse;
-use MightyCode\GoogleMovieClient\Models\Movie;
-use MightyCode\GoogleMovieClient\Parsers\ShowtimeParser;
-use MightyCode\GoogleMovieClient\Parsers\TheaterParser;
+use GoogleMovieClient\Helpers\ParseHelper;
+use GoogleMovieClient\Models\DataResponse;
+use GoogleMovieClient\Models\Movie;
+use GoogleMovieClient\Parsers\ShowtimeParser;
+use GoogleMovieClient\Parsers\TheaterParser;
 use Symfony\Component\DomCrawler\Crawler;
 
 class MovieClient implements MovieClientInterface
