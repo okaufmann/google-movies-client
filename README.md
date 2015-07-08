@@ -7,10 +7,8 @@ Extended Client to fetch data from [http://google.com/movies](http://google.com/
 
   - Search Movies Showtimes by Location and Movie Title
   - Get Showtimes of single Movie
-
-## Dependencies
-
-* [sunra/php-simple-html-dom-parser](https://github.com/sunra/php-simple-html-dom-parser) - PHP Dom Parser
+  - Get Showtimes of single Theater
+  - Get Theaters near a location
 
 ### Installation
 
@@ -33,8 +31,8 @@ or
 use GoogleMovieClient\Client;
 
 $client = new Client();
-$result = $client->findShowtimesByMovieTitle("New York","American Sniper","en");
-var_dump($result);
+$result = $client->queryShowtimesByMovieTitleNear("New York","American Sniper","en");
+dd($result);
 ```
 
 ### Todo's
@@ -47,6 +45,4 @@ License
 ----
 
 MIT
-
-Brought to you by [Mighty Code](http://mighty-code.com)
 

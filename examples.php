@@ -8,10 +8,10 @@ $test = new Client();
 try {
     //$days = $test->getShowtimesByTheaterId("eef3a3f57d224cf7", "Thun", "de");
     // $days = $test->getShowtimesByTheaterId("dac1dda012a03d0f", "Brooklyn", "en");
-    //$days = $test->getTheatersNear("Unterseen", "en");
-    $days = $test->queryShowtimesByMovieTitleNear('Unterseen', 'Minions', 'en');
+    //$days = $test->getTheatersNear("Bern", "en");
+    $days = $test->queryShowtimesByMovieTitleNear('Bern', 'Minions', 'en');
     //header('Content-Type: application/json; charset=utf-8');
-    echo dd($days);
+    dd($days);
 } catch (Exception $ex) {
     echo $ex->getMessage();
 
