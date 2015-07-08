@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: okaufmann
- * Date: 06.07.2015
- * Time: 21:49
- */
 
 namespace GoogleMovieClient\Helpers;
 

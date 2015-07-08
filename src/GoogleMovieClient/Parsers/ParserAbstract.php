@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: okaufmann
- * Date: 07.07.2015
- * Time: 07:08
- */
 
 namespace GoogleMovieClient\Parsers;
 
