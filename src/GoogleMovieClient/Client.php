@@ -71,7 +71,7 @@ class Client implements ClientInterface
      * @param string $tid
      * @param $near
      * @param string $lang
-     * @param int $dateOffset
+     * @param int    $dateOffset
      *
      * @return mixed
      */
@@ -154,7 +154,7 @@ class Client implements ClientInterface
      * @param string $near
      * @param string $name
      * @param string $lang
-     * @param null $dateOffset
+     * @param null   $dateOffset
      *
      * @throws \Exception
      *
@@ -213,7 +213,7 @@ class Client implements ClientInterface
      *
      * @param string $near
      * @param string $lang
-     * @param null $dateOffset
+     * @param null   $dateOffset
      *
      * @throws \Exception
      *
@@ -239,13 +239,13 @@ class Client implements ClientInterface
     /**
      * get the requested html from google with the passed parameters.
      *
-     * @param null $near
-     * @param null $search
-     * @param null $mid
-     * @param null $tid
+     * @param null   $near
+     * @param null   $search
+     * @param null   $mid
+     * @param null   $tid
      * @param string $language
-     * @param null $date
-     * @param int $start
+     * @param null   $date
+     * @param int    $start
      *
      * @return DataResponse
      */
@@ -270,7 +270,7 @@ class Client implements ClientInterface
 
         $response = new DataResponse();
 
-        $url = self::GOOGLE_MOVIE_URL.'?'.http_build_query($params);
+        $url = self::GOOGLE_MOVIE_URL . '?' . http_build_query($params);
 
         $guzzle_response = $this->http_client->get($url);
 

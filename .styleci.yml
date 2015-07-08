@@ -2,3 +2,5 @@ preset: psr2
 
 disabled:
    - phpdoc_params
+   - unary_operators_spaces
+   - concat_without_spaces

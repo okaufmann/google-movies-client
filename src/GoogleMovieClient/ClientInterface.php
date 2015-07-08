@@ -10,7 +10,7 @@ interface ClientInterface
      * @param string $mid
      * @param string $near
      * @param string $lang
-     * @param null $dateOffset
+     * @param null   $dateOffset
      *
      * @return mixed
      */
@@ -22,7 +22,7 @@ interface ClientInterface
      * @param string $tid
      * @param $near
      * @param string $lang
-     * @param null $dateOffset
+     * @param null   $dateOffset
      *
      * @return mixed
      */
@@ -43,7 +43,7 @@ interface ClientInterface
      *
      * @param string $near
      * @param string $lang
-     * @param null $dateOffset
+     * @param null   $dateOffset
      *
      * @return mixed
      */

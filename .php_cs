@@ -22,7 +22,6 @@ $fixers = [
     'trailing_spaces',
     'visibility',
     'blankline_after_open_tag',
-    'concat_without_spaces',
     'double_arrow_multiline_whitespaces',
     'duplicate_semicolon',
     'extra_empty_lines',
@@ -59,14 +58,14 @@ $fixers = [
     'ternary_spaces',
     'trim_array_spaces',
     'unalign_equals',
-    'unary_operators_spaces',
     'unused_use',
     'whitespacy_lines',
     'align_double_arrow',
     'multiline_spaces_before_semicolon',
     'ordered_use',
+    'phpdoc_params',
     'phpdoc_order',
-    'short_array_syntax',
+    'short_array_syntax'
 ];
 
 $finder = Symfony\CS\Finder\DefaultFinder::create()
