@@ -60,7 +60,7 @@ class ResultItemParser extends ParserAbstract
 
         $url = $resultItemA->attr("href");
 
-        if (!$url) {
+        if ( ! $url) {
             return null;
         }
 

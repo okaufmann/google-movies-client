@@ -3,22 +3,19 @@
 namespace GoogleMovieClient;
 
 use Carbon\Carbon;
-use GuzzleHttp\Client;
+use GuzzleHttp\Client as GuzzleClient;
 use GoogleMovieClient\Helpers\ParseHelper;
 use GoogleMovieClient\Models\DataResponse;
-use GoogleMovieClient\Models\Movie;
 use GoogleMovieClient\Parsers\ShowtimeParser;
 use Symfony\Component\DomCrawler\Crawler;
 
-class MovieClient implements MovieClientInterface
+class Client implements ClientInterface
 {
 
-    private $_baseUrl = "http://www.google.com/movies";
-
-    private $_dev_mode = false;
+    const GOOGLE_MOVIE_URL = "http://www.google.com/movies";
 
     //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
-    private $_userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+    const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
 
     private $http_client;
 
@@ -42,7 +39,7 @@ class MovieClient implements MovieClientInterface
         //TODO: Add multiple result pages parsing
 
         $dataResponse = $this->getData($near, null, $mid, null, $lang, $dateOffset);
-        $days = array();
+        $days = [];
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
@@ -51,7 +48,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByMovie($dayDate->copy());
             $days[] = $result;
 
-            for ($i = $dateOffset + 1; $i < 20; $i++) {
+            for ($i = $dateOffset + 1; $i < 20; $i ++) {
                 $dataResponse = $this->getData($near, null, $mid, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -63,8 +60,8 @@ class MovieClient implements MovieClientInterface
                     $days[] = $result;
                 }
             }
-
         }
+
         return $days;
     }
 
@@ -84,7 +81,7 @@ class MovieClient implements MovieClientInterface
         //TODO: Add multiple result pages parsing
 
         $dataResponse = $this->getData($near, null, null, $tid, $lang, $dateOffset);
-        $days = array();
+        $days = [];
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
@@ -94,7 +91,7 @@ class MovieClient implements MovieClientInterface
             $result = $parser->getShowtimeDayByTheater($dayDate);
             $days[] = $result;
 
-            for ($i = $dateOffset + 1; $i < 20; $i++) {
+            for ($i = $dateOffset + 1; $i < 20; $i ++) {
                 $dataResponse = $this->getData($near, null, null, $tid, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -147,24 +144,25 @@ class MovieClient implements MovieClientInterface
         }
 
         return $theaters;
-
     }
 
     /**
      * Returns Showtimes found by a search for a movie title
-     *
      * @param string $near
      * @param string $name
      * @param string $lang
      * @param null $dateOffset
-     * @return mixed
+     * @return mixed|null
+     * @throws \Exception
      */
     public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateOffset = null)
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
 
         $dataResponse = $this->getData($near, $name, null, null, $lang);
-        $days = array();
+        $days = [];
+        $movie = null;
+
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
@@ -173,7 +171,7 @@ class MovieClient implements MovieClientInterface
             $movies = $parser->parseMovies(false);
 
             //TODO: Replace by handeles multiple movies in results!
-            /* @var Movie $movie */
+
             $movie = $movies[0];
 
             if (count($movies) > 1) {
@@ -186,7 +184,7 @@ class MovieClient implements MovieClientInterface
 
             $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
 
-            for ($i = $dateOffset + 1; $i < 20; $i++) {
+            for ($i = $dateOffset + 1; $i < 20; $i ++) {
                 $dataResponse = $this->getData($near, $name, null, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
@@ -227,8 +225,8 @@ class MovieClient implements MovieClientInterface
      */
     private function constructHttpClient()
     {
-        $this->http_client = new Client();
-        $this->http_client->setDefaultOption('headers', ['User-Agent' => $this->_userAgent]);
+        $this->http_client = new GuzzleClient();
+        $this->http_client->setDefaultOption('headers', ['User-Agent' => self::USER_AGENT]);
     }
 
     /**
@@ -243,32 +241,34 @@ class MovieClient implements MovieClientInterface
      * @param int $start
      * @return DataResponse
      */
-    private
-    function getData($near = null, $search = null, $mid = null, $tid = null, $language = "en", $date = null, $start = null)
-    {
-        $params = array(
+    private function getData(
+        $near = null,
+        $search = null,
+        $mid = null,
+        $tid = null,
+        $language = "en",
+        $date = null,
+        $start = null
+    ) {
+        $params = [
             'near' => $near,
-            'mid' => $mid,
-            'tid' => $tid,
-            'q' => $search, //Movie title
-            'hl' => $language, //en, de, fr...
+            'mid'  => $mid,
+            'tid'  => $tid,
+            'q'    => $search, //Movie title
+            'hl'   => $language, //en, de, fr...
             'date' => $date,
             'start' => $start
-        );
+        ];
 
         $response = new DataResponse();
-        if ($this->_dev_mode) {
-            $url = 'http://' . $_SERVER['HTTP_HOST'] . '/google-movie-client/testdata/movies_' . http_build_query($params) . '.html';
-            $response->body = file_get_contents($url);
-        } else {
-            $url = $this->_baseUrl . '?' . http_build_query($params);
 
-            $guzzle_response = $this->http_client->get($url);
+        $url = self::GOOGLE_MOVIE_URL . '?' . http_build_query($params);
 
-            $response->body = $guzzle_response->getBody()->getContents();
-            $response->code = $guzzle_response->getStatusCode();
-            $response->headers = $guzzle_response->getHeaders();
-        }
+        $guzzle_response = $this->http_client->get($url);
+
+        $response->body = $guzzle_response->getBody()->getContents();
+        $response->code = $guzzle_response->getStatusCode();
+        $response->headers = $guzzle_response->getHeaders();
 
 
         return $response;

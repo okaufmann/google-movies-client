@@ -89,22 +89,6 @@ class Movie
     }
 
     /**
-     * @return array
-     */
-    public function getShowtimeDays()
-    {
-        return $this->showtimeDays;
-    }
-
-    /**
-     * @param array $showtimeDays
-     */
-    public function setShowtimeDays($showtimeDays)
-    {
-        $this->showtimeDays = $showtimeDays;
-    }
-
-    /**
      * @return ShowtimeInfo
      */
     public function getShowtimeInfo()

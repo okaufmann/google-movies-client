@@ -5,7 +5,7 @@ namespace GoogleMovieClient\Models;
 class TheaterShowtimeDay
 {
     private $date;
-    
+
     private $theaters = [];
 
     /**

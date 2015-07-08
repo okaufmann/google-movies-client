@@ -6,7 +6,6 @@ use GoogleMovieClient\Helpers\ParseHelper;
 use GoogleMovieClient\Models\MovieShowtimeDay;
 use GoogleMovieClient\Models\ShowtimeInfo;
 use GoogleMovieClient\Models\TheaterShowtimeDay;
-use GoogleMovieClient\Models\Theater;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ShowtimeParser extends ParserAbstract
@@ -32,6 +31,7 @@ class ShowtimeParser extends ParserAbstract
         if (count($theaters) > 0) {
             $showDay->setTheaters($theaters);
             $showDay->setDate($date);
+
             return $showDay;
         }
 
@@ -50,6 +50,7 @@ class ShowtimeParser extends ParserAbstract
         if (count($movies) > 0) {
             $showDay->setMovies($movies);
             $showDay->setDate($date);
+
             return $showDay;
         }
 
@@ -158,7 +159,7 @@ class ShowtimeParser extends ParserAbstract
             $time = trim(html_entity_decode($text));
             $time = $this->getTime($time);
 
-            if (!empty($time)) {
+            if ( ! empty($time)) {
                 $times[] = $time;
             }
         }
@@ -185,4 +186,3 @@ class ShowtimeParser extends ParserAbstract
         return null;
     }
 }
-

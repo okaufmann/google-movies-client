@@ -2,7 +2,7 @@
 
 namespace GoogleMovieClient;
 
-interface MovieClientInterface
+interface ClientInterface
 {
 
     /**
@@ -55,5 +55,4 @@ interface MovieClientInterface
      * @return mixed
      */
     public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateoffset = null);
-
 }

@@ -19,11 +19,11 @@ class ParseHelper
      */
     public static function getParamFromLink($url, $paramName)
     {
-        if (!$url) {
+        if ( ! $url) {
             throw new \InvalidArgumentException("url");
         }
 
-        if (!$paramName) {
+        if ( ! $paramName) {
             throw new \InvalidArgumentException("paramName");
         }
 
