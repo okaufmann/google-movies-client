@@ -2,7 +2,6 @@
 
 namespace GoogleMovieClient\Models;
 
-
 class MovieShowtimeDay
 {
     private $date;

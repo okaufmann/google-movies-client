@@ -2,7 +2,6 @@
 
 namespace GoogleMovieClient\Models;
 
-use Sunra\PhpSimple\HtmlDomParser;
 use Symfony\Component\DomCrawler\Crawler;
 
 class DataResponse

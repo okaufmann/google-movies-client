@@ -2,23 +2,24 @@
 
 namespace GoogleMovieClient\Helpers;
 
-
 class ParseHelper
 {
     /**
-     * get value of a passes param in a query
+     * get value of a passes param in a query.
+     *
      * @param $url
      * @param $paramName
+     *
      * @return null
      */
     public static function getParamFromLink($url, $paramName)
     {
-        if ( ! $url) {
-            throw new \InvalidArgumentException("url");
+        if (!$url) {
+            throw new \InvalidArgumentException('url');
         }
 
-        if ( ! $paramName) {
-            throw new \InvalidArgumentException("paramName");
+        if (!$paramName) {
+            throw new \InvalidArgumentException('paramName');
         }
 
         $parts = parse_url(html_entity_decode($url));

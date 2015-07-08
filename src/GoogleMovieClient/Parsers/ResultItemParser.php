@@ -2,7 +2,6 @@
 
 namespace GoogleMovieClient\Parsers;
 
-
 use GoogleMovieClient\Helpers\ParseHelper;
 use GoogleMovieClient\Models\Movie;
 use GoogleMovieClient\Models\ResultItem;
@@ -46,15 +45,16 @@ class ResultItemParser extends ParserAbstract
      * @param Crawler $resultItemDiv
      * @param $paramName
      * @param $className
+     *
      * @return ResultItem|null
      */
     private function parseResultItem(Crawler $resultItemDiv, $paramName, $className)
     {
-        $resultItemA = $resultItemDiv->filter("h2 a, .name a")->first();
+        $resultItemA = $resultItemDiv->filter('h2 a, .name a')->first();
 
-        $url = $resultItemA->attr("href");
+        $url = $resultItemA->attr('href');
 
-        if ( ! $url) {
+        if (!$url) {
             return null;
         }
 

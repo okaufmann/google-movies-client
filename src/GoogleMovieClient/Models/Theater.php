@@ -30,11 +30,11 @@ class Theater
             $this->setCity($addressParts[1]);
             if (count($addressParts) == 4) {
                 $this->setState($addressParts[2]);
-                $cityParts = explode(" - ", $addressParts[3]);
+                $cityParts = explode(' - ', $addressParts[3]);
                 $this->setCountry($cityParts[0]);
             } else {
                 if (count($addressParts) == 3) {
-                    $cityParts = explode(" - ", $addressParts[2]);
+                    $cityParts = explode(' - ', $addressParts[2]);
                     $this->setCountry($cityParts[0]);
                 }
             }

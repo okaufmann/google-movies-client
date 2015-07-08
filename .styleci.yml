@@ -1,5 +1,0 @@
-preset: psr2
-
-enabled:
-  - phpdoc_params
-  - unused_use
