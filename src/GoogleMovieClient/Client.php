@@ -69,7 +69,7 @@ class Client implements ClientInterface
      * Returns Showtimes for a specific Theater.
      *
      * @param string $tid
-     * @param $near
+     * @param        $near
      * @param string $lang
      * @param int    $dateOffset
      *
