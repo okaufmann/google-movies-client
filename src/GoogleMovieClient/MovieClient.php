@@ -4,12 +4,10 @@ namespace GoogleMovieClient;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use Illuminate\Support\Collection;
 use GoogleMovieClient\Helpers\ParseHelper;
 use GoogleMovieClient\Models\DataResponse;
 use GoogleMovieClient\Models\Movie;
 use GoogleMovieClient\Parsers\ShowtimeParser;
-use GoogleMovieClient\Parsers\TheaterParser;
 use Symfony\Component\DomCrawler\Crawler;
 
 class MovieClient implements MovieClientInterface
