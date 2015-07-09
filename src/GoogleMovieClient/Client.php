@@ -21,21 +21,21 @@ class Client implements ClientInterface
     const GOOGLE_MOVIE_URL = 'www.google.com/movies';
 
     /**
-     * Stores the HTTP Client
+     * Stores the HTTP Client.
      *
      * @var HttpClient
      */
     private $httpClient;
 
     /**
-     * Store the options
+     * Store the options.
      *
      * @var array
      */
     private $options = [];
 
     /**
-     * Construct our client
+     * Construct our client.
      *
      * @param array $options
      */
@@ -62,7 +62,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * Get the adapter
+     * Get the adapter.
      *
      * @return AdapterInterface
      */
@@ -72,7 +72,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * Get the event dispatcher
+     * Get the event dispatcher.
      *
      * @return AdapterInterface
      */
@@ -314,7 +314,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * Construct the http client
+     * Construct the http client.
      *
      * @return void
      */
@@ -328,9 +328,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * Configure options
+     * Configure options.
      *
-     * @param  array $options
+     * @param array $options
+     *
      * @return array
      */
     protected function configureOptions(array $options)
@@ -356,7 +357,7 @@ class Client implements ClientInterface
             'secure',
             'event_dispatcher',
             'cache',
-            'log'
+            'log',
         ]);
         $resolver->setAllowedTypes('adapter', ['object', 'null']);
         $resolver->setAllowedTypes('host', ['string']);
@@ -368,9 +369,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * Configure caching
+     * Configure caching.
      *
-     * @param  array $options
+     * @param array $options
+     *
      * @return array
      */
     protected function configureCacheOptions(array $options = [])
@@ -401,9 +403,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * Configure logging
+     * Configure logging.
      *
-     * @param  array $options
+     * @param array $options
+     *
      * @return array
      */
     protected function configureLogOptions(array $options = [])
@@ -438,7 +441,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * Post resolve
+     * Post resolve.
      *
      * @param array $options
      */
@@ -489,7 +492,6 @@ class Client implements ClientInterface
             'date'  => $date,
             'start' => $start,
         ];
-
 
         $url = '?' . http_build_query($params);
 
