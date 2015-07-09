@@ -13,8 +13,12 @@
 namespace GoogleMovieClient\HttpClient;
 
 use GoogleMovieClient\Common\ParameterBag;
+use GoogleMovieClient\Events\GoogleMovieClientEvents;
 use GoogleMovieClient\Events\RequestEvent;
+use GoogleMovieClient\Events\RequestSubscriber;
 use GoogleMovieClient\HttpClient\Adapter\AdapterInterface;
+use GoogleMovieClient\HttpClient\Adapter\GuzzleAdapter;
+use GoogleMovieClient\HttpClient\Plugins\UserAgentHeaderPlugin;
 use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -22,8 +26,6 @@ use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tmdb\HttpClient\Adapter\GuzzleAdapter;
-use Tmdb\HttpClient\Plugin\UserAgentHeaderPlugin;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -210,7 +212,7 @@ class HttpClient
         $request = $this->createRequest($path, $method, $parameters, $headers, $body);
 
         $event = new RequestEvent($request);
-        $this->eventDispatcher->dispatch(TmdbEvents::REQUEST, $event);
+        $this->eventDispatcher->dispatch(GoogleMovieClientEvents::REQUEST, $event);
 
         $this->lastResponse = $event->getResponse();
 
@@ -301,29 +303,8 @@ class HttpClient
      */
     public function registerDefaults()
     {
-        if (! array_key_exists('token', $this->options)) {
-            throw new ApiTokenMissingException('An API token was not configured, please configure the `token` option with an correct ApiToken() object.');
-        }
-
         $requestSubscriber = new RequestSubscriber();
         $this->addSubscriber($requestSubscriber);
-
-        $hydrationSubscriber = new HydrationSubscriber();
-        $this->addSubscriber($hydrationSubscriber);
-
-        $apiTokenPlugin = new ApiTokenPlugin(
-            is_string($this->options['token']) ?
-                new ApiToken($this->options['token']) :
-                $this->options['token']
-        );
-
-        $this->addSubscriber($apiTokenPlugin);
-
-        $acceptJsonHeaderPlugin = new AcceptJsonHeaderPlugin();
-        $this->addSubscriber($acceptJsonHeaderPlugin);
-
-        $contentTypeHeaderPlugin = new ContentTypeJsonHeaderPlugin();
-        $this->addSubscriber($contentTypeHeaderPlugin);
 
         $userAgentHeaderPlugin = new UserAgentHeaderPlugin();
         $this->addSubscriber($userAgentHeaderPlugin);
@@ -331,12 +312,17 @@ class HttpClient
         return $this;
     }
 
-    protected function processOptions()
+    public function isDefaultAdapter()
     {
-        if ($sessionToken = $this->options['session_token']) {
-            $this->setSessionToken($sessionToken);
+        if (! class_exists('GuzzleHttp\Client')) {
+            return false;
         }
 
+        return ($this->getAdapter() instanceof GuzzleAdapter);
+    }
+
+    protected function processOptions()
+    {
         $cache = $this->options['cache'];
 
         if ($cache['enabled']) {

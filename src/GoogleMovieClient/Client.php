@@ -13,8 +13,6 @@ class Client implements ClientInterface
 {
     const GOOGLE_MOVIE_URL = 'http://www.google.com/movies';
 
-    //current release of chrome. Got user agent string from: http://www.useragentstring.com/pages/Chrome/
-    const USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 
     private $http_client;
 
