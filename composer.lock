@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "203411a3cda37a9779ae547c9ae79373",
+    "hash": "a15d801553112a80e45b210cdd1bc58c",
     "packages": [
         {
             "name": "danielstjules/stringy",
@@ -746,12 +746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/DomCrawler.git",
-                "reference": "3fb7dae9cc8787f3ac20cc6ceefe22bf40bae9b8"
+                "reference": "3aed431721a4a779d1ec30210bd53075da9623f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DomCrawler/zipball/3fb7dae9cc8787f3ac20cc6ceefe22bf40bae9b8",
-                "reference": "3fb7dae9cc8787f3ac20cc6ceefe22bf40bae9b8",
+                "url": "https://api.github.com/repos/symfony/DomCrawler/zipball/3aed431721a4a779d1ec30210bd53075da9623f5",
+                "reference": "3aed431721a4a779d1ec30210bd53075da9623f5",
                 "shasum": ""
             },
             "require": {
@@ -791,7 +791,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-04 20:21:09"
+            "time": "2015-07-09 16:11:14"
         },
         {
             "name": "symfony/event-dispatcher",
