@@ -3,21 +3,110 @@
 namespace GoogleMovieClient;
 
 use Carbon\Carbon;
+use Doctrine\Common\Cache\FilesystemCache;
 use GoogleMovieClient\Helpers\ParseHelper;
+use GoogleMovieClient\HttpClient\Adapter\AdapterInterface;
+use GoogleMovieClient\HttpClient\Adapter\GuzzleAdapter;
+use GoogleMovieClient\HttpClient\HttpClient;
 use GoogleMovieClient\Models\DataResponse;
 use GoogleMovieClient\Parsers\ShowtimeParser;
-use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Ring\Client\StreamHandler;
+use Psr\Log\LogLevel;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Client implements ClientInterface
 {
-    const GOOGLE_MOVIE_URL = 'http://www.google.com/movies';
+    const GOOGLE_MOVIE_URL = 'www.google.com/movies';
 
-    private $http_client;
+    /**
+     * Stores the HTTP Client
+     *
+     * @var HttpClient
+     */
+    private $httpClient;
 
-    public function __construct()
+    /**
+     * Store the options
+     *
+     * @var array
+     */
+    private $options = [];
+
+    /**
+     * Construct our client
+     *
+     * @param array $options
+     */
+    public function __construct($options = [])
     {
+        $this->configureOptions($options);
         $this->constructHttpClient();
+    }
+
+    /**
+     * @param HttpClient $httpClient
+     */
+    public function setHttpClient(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
+    /**
+     * @return HttpClient
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
+    }
+
+    /**
+     * Get the adapter
+     *
+     * @return AdapterInterface
+     */
+    public function getAdapter()
+    {
+        return $this->options['adapter'];
+    }
+
+    /**
+     * Get the event dispatcher
+     *
+     * @return AdapterInterface
+     */
+    public function getEventDispatcher()
+    {
+        return $this->options['event_dispatcher'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
+    public function getOption($key)
+    {
+        return array_key_exists($key, $this->options) ? $this->options : null;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function setOptions(array $options = [])
+    {
+        $this->options = $this->configureOptions($options);
     }
 
     /**
@@ -225,12 +314,148 @@ class Client implements ClientInterface
     }
 
     /**
-     * Prepares the http Client.
+     * Construct the http client
+     *
+     * @return void
      */
-    private function constructHttpClient()
+    protected function constructHttpClient()
     {
-        $this->http_client = new GuzzleClient();
-        $this->http_client->setDefaultOption('headers', ['User-Agent' => self::USER_AGENT]);
+        $hasHttpClient = (null !== $this->httpClient);
+        $this->httpClient = new HttpClient($this->getOptions());
+        if (! $hasHttpClient) {
+            $this->httpClient->registerDefaults();
+        }
+    }
+
+    /**
+     * Configure options
+     *
+     * @param  array $options
+     * @return array
+     */
+    protected function configureOptions(array $options)
+    {
+        $resolver = new OptionsResolver();
+
+        $resolver->setDefaults([
+            'adapter'          => null,
+            'secure'           => true,
+            'host'             => self::GOOGLE_MOVIE_URL,
+            'base_url'         => null,
+            'token'            => null,
+            'session_token'    => null,
+            'event_dispatcher' => array_key_exists('event_dispatcher',
+                $this->options) ? $this->options['event_dispatcher'] : new EventDispatcher(),
+            'cache'            => [],
+            'log'              => [],
+        ]);
+        $resolver->setRequired([
+            'adapter',
+            'host',
+            'token',
+            'secure',
+            'event_dispatcher',
+            'cache',
+            'log'
+        ]);
+        $resolver->setAllowedTypes('adapter', ['object', 'null']);
+        $resolver->setAllowedTypes('host', ['string']);
+        $resolver->setAllowedTypes('event_dispatcher', ['object']);
+        $this->options = $resolver->resolve($options);
+        $this->postResolve($options);
+
+        return $this->options;
+    }
+
+    /**
+     * Configure caching
+     *
+     * @param  array $options
+     * @return array
+     */
+    protected function configureCacheOptions(array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'enabled'    => true,
+            'handler'    => null,
+            'subscriber' => null,
+            'path'       => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'google-movie-client',
+        ]);
+        $resolver->setRequired([
+            'enabled',
+            'handler',
+        ]);
+        $resolver->setAllowedTypes('enabled', ['bool']);
+        $resolver->setAllowedTypes('handler', ['object', 'null']);
+        $resolver->setAllowedTypes('subscriber', ['object', 'null']);
+        $resolver->setAllowedTypes('path', ['string', 'null']);
+        $options = $resolver->resolve(array_key_exists('cache', $options) ? $options['cache'] : []);
+        if ($options['enabled'] && ! $options['handler']) {
+            $options['handler'] = new FilesystemCache(
+                $options['path']
+            );
+        }
+
+        return $options;
+    }
+
+    /**
+     * Configure logging
+     *
+     * @param  array $options
+     * @return array
+     */
+    protected function configureLogOptions(array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'enabled'    => false,
+            'level'      => LogLevel::DEBUG,
+            'handler'    => null,
+            'subscriber' => null,
+            'path'       => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'google-movie-client.log',
+        ]);
+        $resolver->setRequired([
+            'enabled',
+            'level',
+            'handler',
+        ]);
+        $resolver->setAllowedTypes('enabled', ['bool']);
+        $resolver->setAllowedTypes('level', ['string']);
+        $resolver->setAllowedTypes('handler', ['object', 'null']);
+        $resolver->setAllowedTypes('path', ['string', 'null']);
+        $resolver->setAllowedTypes('subscriber', ['object', 'null']);
+        $options = $resolver->resolve(array_key_exists('log', $options) ? $options['log'] : []);
+        if ($options['enabled'] && ! $options['handler']) {
+            $options['handler'] = new StreamHandler(
+                $options['path'],
+                $options['level']
+            );
+        }
+
+        return $options;
+    }
+
+    /**
+     * Post resolve
+     *
+     * @param array $options
+     */
+    protected function postResolve(array $options = [])
+    {
+        $this->options['base_url'] = sprintf(
+            '%s://%s',
+            'https',
+            $this->options['host']
+        );
+        if (! $this->options['adapter']) {
+            $this->options['adapter'] = new GuzzleAdapter(
+                new \GuzzleHttp\Client(['base_url' => $this->options['base_url']])
+            );
+        }
+        $this->options['cache'] = $this->configureCacheOptions($options);
+        $this->options['log'] = $this->configureLogOptions($options);
     }
 
     /**
@@ -265,15 +490,13 @@ class Client implements ClientInterface
             'start' => $start,
         ];
 
+
+        $url = '?' . http_build_query($params);
+
+        $guzzle_response = $this->httpClient->get($url);
+
         $response = new DataResponse();
-
-        $url = self::GOOGLE_MOVIE_URL . '?' . http_build_query($params);
-
-        $guzzle_response = $this->http_client->get($url);
-
-        $response->body = $guzzle_response->getBody()->getContents();
-        $response->code = $guzzle_response->getStatusCode();
-        $response->headers = $guzzle_response->getHeaders();
+        $response->body = $guzzle_response;
 
         return $response;
     }

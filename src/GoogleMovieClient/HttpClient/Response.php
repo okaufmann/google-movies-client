@@ -19,7 +19,7 @@ use GoogleMovieClient\Common\ParameterBag;
 /**
  * Class Response.
  */
-class Respons
+class Response
 {
     /**
      * @var string

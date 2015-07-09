@@ -25,7 +25,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class GuzzleAdapzer extends AbstractAdapter
+class GuzzleAdapter extends AbstractAdapter
 {
     /**
      * @var ClientInterface
