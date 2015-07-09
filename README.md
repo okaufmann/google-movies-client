@@ -31,9 +31,11 @@ or
 use GoogleMovieClient\Client;
 
 $client = new Client();
-$result = $client->queryShowtimesByMovieTitleNear("New York","American Sniper","en");
+$result = $client->queryShowtimesByMovieTitleNear("New York","Minions","en");
 dd($result);
 ```
+
+**NOTE:**: You have to give the `$near` parameter on every call. Otherwise you will get strange wrong information.
 
 ### Todo's
 
