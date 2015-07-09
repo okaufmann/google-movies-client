@@ -12,16 +12,16 @@
  */
 namespace GoogleMovieClient\HttpClient\Adapter;
 
+use GoogleMovieClient\Common\ParameterBag;
+use GoogleMovieClient\Exceptions\HttpRequestException;
+use GoogleMovieClient\Exceptions\NullResponseException;
+use GoogleMovieClient\HttpClient\Request;
+use GoogleMovieClient\HttpClient\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Tmdb\Common\ParameterBag;
-use Tmdb\Exception\NullResponseException;
-use Tmdb\HttpClient\Request;
-use Tmdb\HttpClient\Response;
 
 class GuzzleAdapter extends AbstractAdapter
 {
@@ -49,33 +49,8 @@ class GuzzleAdapter extends AbstractAdapter
      */
     public function registerSubscribers(EventDispatcherInterface $eventDispatcher)
     {
-        $filter = RetrySubscriber::createChainFilter([
-            RetrySubscriber::createIdempotentFilter(),
-            RetrySubscriber::createStatusFilter([427, 500, 503])
-        ]);
-
-        $retry = new RetrySubscriber([
-            'filter' => $filter,
-            'delay'  => function ($number, $event) {
-                /** @var \GuzzleHttp\Message\Response $response */
-                if (null !== $response = $event->getResponse() && $event->getResponse()->getStatusCode() === 427) {
-                    $time = microtime(true);
-                    $resetAt = (int) $response->getHeader('X-RateLimit-Reset');
-
-                    $sleep = $resetAt - $time;
-
-                    if ($sleep >= 0) {
-                        return $sleep * 1000;
-                    }
-                }
-
-                return 0;
-            },
-            'max'    => 3
-        ]);
-
-        $this->client->getEmitter()->attach($retry);
     }
+
 
     /**
      * Format the request for Guzzle
@@ -97,7 +72,7 @@ class GuzzleAdapter extends AbstractAdapter
      * Create the response object
      *
      * @param  ResponseInterface $adapterResponse
-     * @return \Tmdb\HttpClient\Response
+     * @return Response
      */
     private function createResponse(ResponseInterface $adapterResponse = null)
     {
@@ -117,7 +92,7 @@ class GuzzleAdapter extends AbstractAdapter
      *
      * @param  Request               $request
      * @param  RequestException|null $previousException
-     * @throws \Tmdb\Exception\TmdbApiException
+     * @throws HttpRequestException
      */
     protected function handleRequestException(Request $request, RequestException $previousException)
     {

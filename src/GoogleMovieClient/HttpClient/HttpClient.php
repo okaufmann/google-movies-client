@@ -12,6 +12,9 @@
  */
 namespace GoogleMovieClient\HttpClient;
 
+use GoogleMovieClient\Common\ParameterBag;
+use GoogleMovieClient\Events\RequestEvent;
+use GoogleMovieClient\HttpClient\Adapter\AdapterInterface;
 use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -19,7 +22,6 @@ use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tmdb\HttpClient\Adapter\AdapterInterface;
 use Tmdb\HttpClient\Adapter\GuzzleAdapter;
 use Tmdb\HttpClient\Plugin\UserAgentHeaderPlugin;
 

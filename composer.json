@@ -16,7 +16,9 @@
     "guzzlehttp/guzzle": "~5.0",
     "illuminate/support": "^5.2@dev",
     "symfony/var-dumper": "2.8.*",
-    "nesbot/carbon": "~1.19"
+    "nesbot/carbon": "~1.19",
+    "symfony/event-dispatcher": "~2.4",
+    "symfony/options-resolver": "~2.6"
   },
   "authors": [
     {
