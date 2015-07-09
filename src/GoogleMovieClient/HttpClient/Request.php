@@ -1,13 +1,14 @@
 <?php
+
 /**
  * This file is part of the Tmdb PHP API created by Michael Roterman.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @package Tmdb
  * @author Michael Roterman <michael@wtfz.net>
  * @copyright (c) 2013, Michael Roterman
+ *
  * @version 0.0.1
  */
 
@@ -16,8 +17,7 @@ namespace GoogleMovieClient\HttpClient;
 use GoogleMovieClient\Common\ParameterBag;
 
 /**
- * Class Request
- * @package Tmdb\HttpClient
+ * Class Request.
  */
 class Request
 {
@@ -96,7 +96,8 @@ class Request
     }
 
     /**
-     * @param  ParameterBag $headers
+     * @param ParameterBag $headers
+     *
      * @return $this
      */
     public function setHeaders(ParameterBag $headers)
@@ -115,7 +116,8 @@ class Request
     }
 
     /**
-     * @param  string $method
+     * @param string $method
+     *
      * @return $this
      */
     public function setMethod($method)
@@ -134,7 +136,8 @@ class Request
     }
 
     /**
-     * @param  array|ParameterBag $parameters
+     * @param array|ParameterBag $parameters
+     *
      * @return $this
      */
     public function setParameters(ParameterBag $parameters)
@@ -153,7 +156,8 @@ class Request
     }
 
     /**
-     * @param  string $path
+     * @param string $path
+     *
      * @return $this
      */
     public function setPath($path)
@@ -172,7 +176,8 @@ class Request
     }
 
     /**
-     * @param  ParameterBag $options
+     * @param ParameterBag $options
+     *
      * @return $this
      */
     public function setOptions($options)
@@ -195,7 +200,8 @@ class Request
     }
 
     /**
-     * @param  null|string $body
+     * @param null|string $body
+     *
      * @return $this
      */
     public function setBody($body)

@@ -13,7 +13,6 @@ class Client implements ClientInterface
 {
     const GOOGLE_MOVIE_URL = 'http://www.google.com/movies';
 
-
     private $http_client;
 
     public function __construct()

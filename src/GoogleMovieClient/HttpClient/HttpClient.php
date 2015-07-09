@@ -1,15 +1,17 @@
 <?php
+
 /**
  * This file is part of the Tmdb PHP API created by Michael Roterman.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @package Tmdb
  * @author Michael Roterman <michael@wtfz.net>
  * @copyright (c) 2013, Michael Roterman
+ *
  * @version 0.0.1
  */
+
 namespace GoogleMovieClient\HttpClient;
 
 use GoogleMovieClient\Common\ParameterBag;
@@ -26,12 +28,10 @@ use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class HttpClient
- * @package Tmdb\HttpClient
+ * Class HttpClient.
  */
 class HttpClient
 {
@@ -51,7 +51,7 @@ class HttpClient
     protected $options;
 
     /**
-     * The base url to built requests on top of
+     * The base url to built requests on top of.
      *
      * @var null
      */
@@ -68,7 +68,7 @@ class HttpClient
     private $lastRequest;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $options
      */
@@ -140,7 +140,8 @@ class HttpClient
     }
 
     /**
-     * @param  array $options
+     * @param array $options
+     *
      * @return $this
      */
     public function setOptions($options)
@@ -175,7 +176,7 @@ class HttpClient
     }
 
     /**
-     * Get the current base url
+     * Get the current base url.
      *
      * @return null|string
      */
@@ -185,9 +186,10 @@ class HttpClient
     }
 
     /**
-     * Set the base url secure / insecure
+     * Set the base url secure / insecure.
      *
      * @param $url
+     *
      * @return HttpClient
      */
     public function setBaseUrl($url)
@@ -200,11 +202,12 @@ class HttpClient
     /**
      * Create the request object and send it out to listening events.
      *
-     * @param        $path
-     * @param        $method
-     * @param  array $parameters
-     * @param  array $headers
-     * @param  null  $body
+     * @param       $path
+     * @param       $method
+     * @param array $parameters
+     * @param array $headers
+     * @param null  $body
+     *
      * @return string
      */
     private function send($path, $method, array $parameters = [], array $headers = [], $body = null)
@@ -224,13 +227,14 @@ class HttpClient
     }
 
     /**
-     * Create the request object
+     * Create the request object.
      *
-     * @param        $path
-     * @param        $method
-     * @param  array $parameters
-     * @param  array $headers
-     * @param        $body
+     * @param       $path
+     * @param       $method
+     * @param array $parameters
+     * @param array $headers
+     * @param       $body
+     *
      * @return Request
      */
     private function createRequest($path, $method, $parameters = [], $headers = [], $body)
@@ -249,7 +253,7 @@ class HttpClient
     }
 
     /**
-     * Add a subscriber
+     * Add a subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      */
@@ -263,7 +267,7 @@ class HttpClient
     }
 
     /**
-     * Remove a subscriber
+     * Remove a subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      */
@@ -285,7 +289,8 @@ class HttpClient
     }
 
     /**
-     * @param  AdapterInterface $adapter
+     * @param AdapterInterface $adapter
+     *
      * @return $this
      */
     public function setAdapter(AdapterInterface $adapter)
@@ -297,7 +302,7 @@ class HttpClient
     }
 
     /**
-     * Register the default plugins
+     * Register the default plugins.
      *
      * @return $this
      */
@@ -359,8 +364,10 @@ class HttpClient
     /**
      * Add an subscriber to enable caching.
      *
-     * @param  array $parameters
+     * @param array $parameters
+     *
      * @throws \RuntimeException
+     *
      * @return $this
      */
     public function setDefaultCaching(array $parameters)
@@ -383,10 +390,12 @@ class HttpClient
     }
 
     /**
-     * Enable logging
+     * Enable logging.
      *
-     * @param  array $parameters
+     * @param array $parameters
+     *
      * @throws \RuntimeException
+     *
      * @return $this
      */
     public function setDefaultLogging(array $parameters)
@@ -400,7 +409,7 @@ class HttpClient
             );
             //@codeCoverageIgnoreEnd
         } else {
-            $logger = new Logger('php-tmdb-api');
+            $logger = new Logger('google-movie-client');
             $logger->pushHandler($parameters['handler']);
         }
 

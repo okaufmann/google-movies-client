@@ -1,15 +1,17 @@
 <?php
+
 /**
  * This file is part of the Tmdb PHP API created by Michael Roterman.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @package Tmdb
  * @author Michael Roterman <michael@wtfz.net>
  * @copyright (c) 2013, Michael Roterman
+ *
  * @version 0.0.1
  */
+
 namespace GoogleMovieClient\Events;
 
 use GoogleMovieClient\Common\ParameterBag;
@@ -30,7 +32,7 @@ class RequestEvent extends Event
     private $response;
 
     /**
-     * Construct the request event
+     * Construct the request event.
      *
      * @param Request $request
      */
@@ -88,7 +90,8 @@ class RequestEvent extends Event
     }
 
     /**
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return $this
      */
     public function setRequest($request)
@@ -107,7 +110,8 @@ class RequestEvent extends Event
     }
 
     /**
-     * @param  Response $response
+     * @param Response $response
+     *
      * @return $this
      */
     public function setResponse($response)

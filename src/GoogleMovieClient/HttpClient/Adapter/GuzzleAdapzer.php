@@ -1,15 +1,17 @@
 <?php
+
 /**
  * This file is part of the Tmdb PHP API created by Michael Roterman.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @package Tmdb
  * @author Michael Roterman <michael@wtfz.net>
  * @copyright (c) 2013, Michael Roterman
+ *
  * @version 0.0.1
  */
+
 namespace GoogleMovieClient\HttpClient\Adapter;
 
 use GoogleMovieClient\Common\ParameterBag;
@@ -23,7 +25,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class GuzzleAdapter extends AbstractAdapter
+class GuzzleAdapzer extends AbstractAdapter
 {
     /**
      * @var ClientInterface
@@ -51,11 +53,11 @@ class GuzzleAdapter extends AbstractAdapter
     {
     }
 
-
     /**
-     * Format the request for Guzzle
+     * Format the request for Guzzle.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return array
      */
     public function getConfiguration(Request $request)
@@ -64,14 +66,15 @@ class GuzzleAdapter extends AbstractAdapter
 
         return [
             'headers' => $request->getHeaders()->all(),
-            'query'   => $request->getParameters()->all()
+            'query' => $request->getParameters()->all(),
         ];
     }
 
     /**
-     * Create the response object
+     * Create the response object.
      *
-     * @param  ResponseInterface $adapterResponse
+     * @param ResponseInterface $adapterResponse
+     *
      * @return Response
      */
     private function createResponse(ResponseInterface $adapterResponse = null)
@@ -88,10 +91,11 @@ class GuzzleAdapter extends AbstractAdapter
     }
 
     /**
-     * Create the request exception
+     * Create the request exception.
      *
-     * @param  Request               $request
-     * @param  RequestException|null $previousException
+     * @param Request               $request
+     * @param RequestException|null $previousException
+     *
      * @throws HttpRequestException
      */
     protected function handleRequestException(Request $request, RequestException $previousException)
@@ -234,7 +238,7 @@ class GuzzleAdapter extends AbstractAdapter
     }
 
     /**
-     * Retrieve the Guzzle Client
+     * Retrieve the Guzzle Client.
      *
      * @return Client
      */
@@ -244,7 +248,8 @@ class GuzzleAdapter extends AbstractAdapter
     }
 
     /**
-     * @param  ClientInterface $client
+     * @param ClientInterface $client
+     *
      * @return $this
      */
     public function setClient(ClientInterface $client)
