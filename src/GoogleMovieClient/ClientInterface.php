@@ -20,7 +20,7 @@ interface ClientInterface
      * Returns Showtimes for a specific Theater.
      *
      * @param string $tid
-     * @param $near
+     * @param        $near
      * @param string $lang
      * @param null   $dateOffset
      *
@@ -47,7 +47,7 @@ interface ClientInterface
      *
      * @return mixed
      */
-    public function getShowtimesNear($near, $lang = 'en', $dateOffset = null);
+    public function getMoviesNear($near, $lang = 'en', $dateOffset = null);
 
     /**
      * Returns Showtimes found by a search for a movie title.

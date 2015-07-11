@@ -305,12 +305,35 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    public function getShowtimesNear($near, $lang = 'en', $dateOffset = null)
+    public function getMoviesNear($near, $lang = 'en', $dateOffset = null)
     {
-        //http://google.com/movies?near=Interlaken&hl=de
-        //http://google.com/movies?near=Interlaken&hl=de&start=10
-        // TODO: Implement getShowtimesNear() method.
-        throw new \Exception('Not implemented yet');
+        //http://google.com/movies?near=New%20York&hl=en&sort=1
+        //http://google.com/movies?near=New%20York&hl=en&sort=1&start=10
+
+        $dataResponse = $this->getData($near, null, null, null, $lang, null, null, 1);
+
+        if ($dataResponse) {
+            $crawler = $dataResponse->getCrawler();
+            $parser = new ShowtimeParser($crawler);
+            $movies = $parser->parseMovies(false);
+
+            $navBarPageLinks = $crawler->filter('#navbar a');
+            $furtherPages = $navBarPageLinks->each(function (Crawler $node, $i) {
+                return $temp = ParseHelper::getParamFromLink($node->attr('href'), 'start');
+            });
+
+            $furtherPages = array_unique($furtherPages);
+
+            foreach ($furtherPages as $page) {
+                $dataResponse = $this->getData($near, null, null, null, $lang, null, $page, 1);
+                if ($dataResponse) {
+                    $parser = new ShowtimeParser($crawler);
+                    $movies = array_merge($parser->parseMovies(false), $movies);
+                }
+            }
+        }
+
+        return $movies;
     }
 
     /**
@@ -481,7 +504,8 @@ class Client implements ClientInterface
         $tid = null,
         $language = 'en',
         $date = null,
-        $start = null
+        $start = null,
+        $sort = null
     ) {
         $params = [
             'near'  => $near,
@@ -491,6 +515,7 @@ class Client implements ClientInterface
             'hl'    => $language, //en, de, fr...
             'date'  => $date,
             'start' => $start,
+            'sort' => $sort
         ];
 
         $url = '?' . http_build_query($params);

@@ -9,6 +9,7 @@ Extended Client to fetch data from [http://google.com/movies](http://google.com/
   - Get Showtimes of single Movie
   - Get Showtimes of single Theater
   - Get Theaters near a location
+  - Get Movies near a location
 
 ### Installation
 
