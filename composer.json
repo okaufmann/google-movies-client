@@ -7,7 +7,7 @@
     "movie",
     "client"
   ],
-  "homepage": "https://github.com/mighty-code/google-movie-client",
+  "homepage": "https://github.com/okaufmann/google-movie-client",
   "license": "MIT",
   "require": {
     "php": ">=5.4",
@@ -28,8 +28,8 @@
   "authors": [
     {
       "name": "Oliver Kaufmann",
-      "email": "mighty@mighty-code.com",
-      "homepage": "https://github.com/mighty-code"
+      "email": "support@mighty-code.com",
+      "homepage": "https://github.com/okaufmann"
     }
   ],
   "autoload": {
