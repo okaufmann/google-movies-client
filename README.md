@@ -3,6 +3,8 @@
 [![GitHub license](https://img.shields.io/github/license/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/releases)
 
+**NOTE: ** This Project is in development. Please use with caution and better not for productive uses. 
+
 Extended Client to fetch data from [http://google.com/movies](http://google.com/movies) in an object oriented way.
 
   - Search Movies Showtimes by Location and Movie Title
