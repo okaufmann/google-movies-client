@@ -225,7 +225,7 @@ class Client implements ClientInterface
             foreach ($furtherPages as $page) {
                 $dataResponse = $this->getData($near, null, null, null, $lang, null, $page);
                 if ($dataResponse) {
-                    $parser = new ShowtimeParser($crawler);
+                    $parser = new ShowtimeParser($dataResponse->getCrawler());
                     $theaters = array_merge($parser->parseTheaters(false), $theaters);
                 }
             }
@@ -312,6 +312,8 @@ class Client implements ClientInterface
 
         $dataResponse = $this->getData($near, null, null, null, $lang, null, null, 1);
 
+        $movies = [];
+
         if ($dataResponse) {
             $crawler = $dataResponse->getCrawler();
             $parser = new ShowtimeParser($crawler);
@@ -327,8 +329,9 @@ class Client implements ClientInterface
             foreach ($furtherPages as $page) {
                 $dataResponse = $this->getData($near, null, null, null, $lang, null, $page, 1);
                 if ($dataResponse) {
-                    $parser = new ShowtimeParser($crawler);
-                    $movies = array_merge($parser->parseMovies(false), $movies);
+                    $parser = new ShowtimeParser($dataResponse->getCrawler());
+                    $pageMovies = $parser->parseMovies(false);
+                    $movies = array_merge($movies, $pageMovies);
                 }
             }
         }

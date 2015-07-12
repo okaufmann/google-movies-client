@@ -6,7 +6,7 @@ use GoogleMovieClient\Client;
 
 $test = new Client();
 try {
-    $days = $test->getMoviesNear('New York', 'en');
+    $days = $test->getMoviesNear('Thun', 'en');
     dd($days);
 } catch (Exception $ex) {
     echo $ex->getMessage();
