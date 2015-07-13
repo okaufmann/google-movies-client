@@ -175,7 +175,7 @@ class Client implements ClientInterface
 
             $parser = new ShowtimeParser($dataResponse->getCrawler());
 
-            $result = $parser->getShowtimeDayByTheater($dayDate);
+            $result = $parser->getShowtimeDayByTheater($dayDate->copy());
             $days[] = $result;
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
