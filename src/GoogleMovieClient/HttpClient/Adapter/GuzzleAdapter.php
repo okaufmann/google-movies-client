@@ -66,7 +66,7 @@ class GuzzleAdapter extends AbstractAdapter
 
         return [
             'headers' => $request->getHeaders()->all(),
-            'query' => $request->getParameters()->all(),
+            'query'   => $request->getParameters()->all(),
         ];
     }
 

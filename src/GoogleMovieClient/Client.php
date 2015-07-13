@@ -518,7 +518,7 @@ class Client implements ClientInterface
             'hl'    => $language, //en, de, fr...
             'date'  => $date,
             'start' => $start,
-            'sort' => $sort
+            'sort'  => $sort,
         ];
 
         $url = '?' . http_build_query($params);
