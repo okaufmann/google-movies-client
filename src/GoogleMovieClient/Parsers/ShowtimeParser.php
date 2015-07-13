@@ -168,7 +168,7 @@ class ShowtimeParser extends ParserAbstract
             }
         }
 
-        $showtime->setTimes($times);
+        $showtime->setTimes(array_unique($times));
 
         return $showtime;
     }
