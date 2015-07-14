@@ -12,10 +12,10 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient\Plugins;
+namespace GoogleMoviesClient\HttpClient\Plugins;
 
-use GoogleMovieClient\Events\GoogleMovieClientEvents;
-use GoogleMovieClient\Events\RequestEvent;
+use GoogleMoviesClient\Events\GoogleMoviesClientEvents;
+use GoogleMoviesClient\Events\RequestEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -29,7 +29,7 @@ class UserAgentHeaderPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            GoogleMovieClientEvents::BEFORE_REQUEST => 'onBeforeSend',
+            GoogleMoviesClientEvents::BEFORE_REQUEST => 'onBeforeSend',
         ];
     }
 

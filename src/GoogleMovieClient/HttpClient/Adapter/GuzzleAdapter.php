@@ -12,13 +12,13 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient\Adapter;
+namespace GoogleMoviesClient\HttpClient\Adapter;
 
-use GoogleMovieClient\Common\ParameterBag;
-use GoogleMovieClient\Exceptions\HttpRequestException;
-use GoogleMovieClient\Exceptions\NullResponseException;
-use GoogleMovieClient\HttpClient\Request;
-use GoogleMovieClient\HttpClient\Response;
+use GoogleMoviesClient\Common\ParameterBag;
+use GoogleMoviesClient\Exceptions\HttpRequestException;
+use GoogleMoviesClient\Exceptions\NullResponseException;
+use GoogleMoviesClient\HttpClient\Request;
+use GoogleMoviesClient\HttpClient\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;

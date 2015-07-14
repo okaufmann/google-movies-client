@@ -1,6 +1,6 @@
 <?php
 
-namespace GoogleMovieClient\Models;
+namespace GoogleMoviesClient\Models;
 
 class TheaterShowtimeDay
 {

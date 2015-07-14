@@ -12,9 +12,9 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient;
+namespace GoogleMoviesClient\HttpClient;
 
-use GoogleMovieClient\Common\ParameterBag;
+use GoogleMoviesClient\Common\ParameterBag;
 
 /**
  * Class Response.

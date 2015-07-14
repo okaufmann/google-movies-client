@@ -12,15 +12,15 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient;
+namespace GoogleMoviesClient\HttpClient;
 
-use GoogleMovieClient\Common\ParameterBag;
-use GoogleMovieClient\Events\GoogleMovieClientEvents;
-use GoogleMovieClient\Events\RequestEvent;
-use GoogleMovieClient\Events\RequestSubscriber;
-use GoogleMovieClient\HttpClient\Adapter\AdapterInterface;
-use GoogleMovieClient\HttpClient\Adapter\GuzzleAdapter;
-use GoogleMovieClient\HttpClient\Plugins\UserAgentHeaderPlugin;
+use GoogleMoviesClient\Common\ParameterBag;
+use GoogleMoviesClient\Events\GoogleMoviesClientEvents;
+use GoogleMoviesClient\Events\RequestEvent;
+use GoogleMoviesClient\Events\RequestSubscriber;
+use GoogleMoviesClient\HttpClient\Adapter\AdapterInterface;
+use GoogleMoviesClient\HttpClient\Adapter\GuzzleAdapter;
+use GoogleMoviesClient\HttpClient\Plugins\UserAgentHeaderPlugin;
 use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -215,7 +215,7 @@ class HttpClient
         $request = $this->createRequest($path, $method, $parameters, $headers, $body);
 
         $event = new RequestEvent($request);
-        $this->eventDispatcher->dispatch(GoogleMovieClientEvents::REQUEST, $event);
+        $this->eventDispatcher->dispatch(GoogleMoviesClientEvents::REQUEST, $event);
 
         $this->lastResponse = $event->getResponse();
 

@@ -2,7 +2,7 @@
 
 require_once '../vendor/autoload.php';
 
-use GoogleMovieClient\Client;
+use GoogleMoviesClient\Client;
 
 $test = new Client();
 try {

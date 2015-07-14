@@ -12,10 +12,10 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\Exceptions;
+namespace GoogleMoviesClient\Exceptions;
 
-use GoogleMovieClient\HttpClient\Request;
-use GoogleMovieClient\HttpClient\Response;
+use GoogleMoviesClient\HttpClient\Request;
+use GoogleMoviesClient\HttpClient\Response;
 
 /**
  * Class TmdbApiException.

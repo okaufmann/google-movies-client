@@ -1,15 +1,15 @@
 <?php
 
-namespace GoogleMovieClient;
+namespace GoogleMoviesClient;
 
 use Carbon\Carbon;
 use Doctrine\Common\Cache\FilesystemCache;
-use GoogleMovieClient\Helpers\ParseHelper;
-use GoogleMovieClient\HttpClient\Adapter\AdapterInterface;
-use GoogleMovieClient\HttpClient\Adapter\GuzzleAdapter;
-use GoogleMovieClient\HttpClient\HttpClient;
-use GoogleMovieClient\Models\DataResponse;
-use GoogleMovieClient\Parsers\ShowtimeParser;
+use GoogleMoviesClient\Helpers\ParseHelper;
+use GoogleMoviesClient\HttpClient\Adapter\AdapterInterface;
+use GoogleMoviesClient\HttpClient\Adapter\GuzzleAdapter;
+use GoogleMoviesClient\HttpClient\HttpClient;
+use GoogleMoviesClient\Models\DataResponse;
+use GoogleMoviesClient\Parsers\ShowtimeParser;
 use GuzzleHttp\Ring\Client\StreamHandler;
 use Psr\Log\LogLevel;
 use Symfony\Component\DomCrawler\Crawler;

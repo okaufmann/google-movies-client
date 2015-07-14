@@ -1,6 +1,6 @@
 <?php
 
-namespace GoogleMovieClient\Parsers;
+namespace GoogleMoviesClient\Parsers;
 
 use Symfony\Component\DomCrawler\Crawler;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace GoogleMovieClient\Parsers;
+namespace GoogleMoviesClient\Parsers;
 
-use GoogleMovieClient\Helpers\ParseHelper;
-use GoogleMovieClient\Models\Movie;
-use GoogleMovieClient\Models\ResultItem;
-use GoogleMovieClient\Models\Theater;
+use GoogleMoviesClient\Helpers\ParseHelper;
+use GoogleMoviesClient\Models\Movie;
+use GoogleMoviesClient\Models\ResultItem;
+use GoogleMoviesClient\Models\Theater;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ResultItemParser extends ParserAbstract

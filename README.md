@@ -31,7 +31,7 @@ or
 ### Use it in your code
 
 ```php
-use GoogleMovieClient\Client;
+use GoogleMoviesClient\Client;
 
 $client = new Client();
 $result = $client->queryShowtimesByMovieTitleNear("New York","Minions","en");

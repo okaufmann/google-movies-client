@@ -1,6 +1,6 @@
 <?php
 
-namespace GoogleMovieClient\Helpers;
+namespace GoogleMoviesClient\Helpers;
 
 class ParseHelper
 {

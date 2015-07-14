@@ -33,7 +33,7 @@
     }
   ],
   "autoload": {
-    "psr-4": {"GoogleMovieClient\\": "src/GoogleMovieClient/"}
+    "psr-4": {"GoogleMoviesClient\\": "src/GoogleMoviesClient/"}
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

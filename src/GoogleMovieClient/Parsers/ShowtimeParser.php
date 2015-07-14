@@ -1,12 +1,12 @@
 <?php
 
-namespace GoogleMovieClient\Parsers;
+namespace GoogleMoviesClient\Parsers;
 
 use Carbon\Carbon;
-use GoogleMovieClient\Helpers\ParseHelper;
-use GoogleMovieClient\Models\MovieShowtimeDay;
-use GoogleMovieClient\Models\ShowtimeInfo;
-use GoogleMovieClient\Models\TheaterShowtimeDay;
+use GoogleMoviesClient\Helpers\ParseHelper;
+use GoogleMoviesClient\Models\MovieShowtimeDay;
+use GoogleMoviesClient\Models\ShowtimeInfo;
+use GoogleMoviesClient\Models\TheaterShowtimeDay;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ShowtimeParser extends ParserAbstract

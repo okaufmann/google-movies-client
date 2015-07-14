@@ -12,9 +12,9 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\Exceptions;
+namespace GoogleMoviesClient\Exceptions;
 
-use GoogleMovieClient\HttpClient\Request;
+use GoogleMoviesClient\HttpClient\Request;
 
 /**
  * Class RuntimeException.

@@ -12,7 +12,7 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\Exceptions;
+namespace GoogleMoviesClient\Exceptions;
 
 /**
  * Class RuntimeException.

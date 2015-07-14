@@ -12,11 +12,11 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient\Adapter;
+namespace GoogleMoviesClient\HttpClient\Adapter;
 
-use GoogleMovieClient\Exceptions\HttpRequestException;
-use GoogleMovieClient\HttpClient\Request;
-use GoogleMovieClient\HttpClient\Response;
+use GoogleMoviesClient\Exceptions\HttpRequestException;
+use GoogleMoviesClient\HttpClient\Request;
+use GoogleMoviesClient\HttpClient\Response;
 
 /**
  * Interface AdapterInterface.

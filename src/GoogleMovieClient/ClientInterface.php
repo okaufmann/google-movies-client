@@ -1,6 +1,6 @@
 <?php
 
-namespace GoogleMovieClient;
+namespace GoogleMoviesClient;
 
 interface ClientInterface
 {

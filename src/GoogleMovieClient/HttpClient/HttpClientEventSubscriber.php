@@ -12,7 +12,7 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\HttpClient;
+namespace GoogleMoviesClient\HttpClient;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

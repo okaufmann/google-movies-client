@@ -12,11 +12,11 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\Events;
+namespace GoogleMoviesClient\Events;
 
-use GoogleMovieClient\Exceptions\RuntimeException;
-use GoogleMovieClient\HttpClient\HttpClientEventSubscriber;
-use GoogleMovieClient\HttpClient\Response;
+use GoogleMoviesClient\Exceptions\RuntimeException;
+use GoogleMoviesClient\HttpClient\HttpClientEventSubscriber;
+use GoogleMoviesClient\HttpClient\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -27,7 +27,7 @@ class RequestSubscriber extends HttpClientEventSubscriber
     public static function getSubscribedEvents()
     {
         return [
-            GoogleMovieClientEvents::REQUEST => 'send',
+            GoogleMoviesClientEvents::REQUEST => 'send',
         ];
     }
 
@@ -41,7 +41,7 @@ class RequestSubscriber extends HttpClientEventSubscriber
     public function send(RequestEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         // Preparation of request parameters / Possibility to use for logging and caching etc.
-        $eventDispatcher->dispatch(GoogleMovieClientEvents::BEFORE_REQUEST, $event);
+        $eventDispatcher->dispatch(GoogleMoviesClientEvents::BEFORE_REQUEST, $event);
 
         if ($event->isPropagationStopped() && $event->hasResponse()) {
             return $event->getResponse();
@@ -51,7 +51,7 @@ class RequestSubscriber extends HttpClientEventSubscriber
         $event->setResponse($response);
 
         // Possibility to cache the request
-        $eventDispatcher->dispatch(GoogleMovieClientEvents::AFTER_REQUEST, $event);
+        $eventDispatcher->dispatch(GoogleMoviesClientEvents::AFTER_REQUEST, $event);
 
         return $response;
     }

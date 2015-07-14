@@ -12,11 +12,11 @@
  * @version 0.0.1
  */
 
-namespace GoogleMovieClient\Events;
+namespace GoogleMoviesClient\Events;
 
-use GoogleMovieClient\Common\ParameterBag;
-use GoogleMovieClient\HttpClient\Request;
-use GoogleMovieClient\HttpClient\Response;
+use GoogleMoviesClient\Common\ParameterBag;
+use GoogleMoviesClient\HttpClient\Request;
+use GoogleMoviesClient\HttpClient\Response;
 use Symfony\Component\EventDispatcher\Event;
 
 class RequestEvent extends Event
