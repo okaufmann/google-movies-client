@@ -1,7 +1,7 @@
 # Google Movie Client
 [![StyleCI](https://styleci.io/repos/30374769/shield)](https://styleci.io/repos/30374769)
-[![GitHub license](https://img.shields.io/github/license/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/okaufmann/google-movie-client.svg?style=flat-square)](https://github.com/okaufmann/google-movie-client/releases)
+[![GitHub license](https://img.shields.io/github/license/okaufmann/google-movies-client.svg?style=flat-square)](https://github.com/okaufmann/google-movies-client/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/okaufmann/google-movies-client.svg?style=flat-square)](https://github.com/okaufmann/google-movies-client/releases)
 
 **NOTE: ** This Project is in development. Please use with caution and better not for productive uses. 
 
