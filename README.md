@@ -34,7 +34,7 @@ or
 use GoogleMoviesClient\Client;
 
 $client = new Client();
-$result = $client->queryShowtimesByMovieTitleNear("New York","Minions","en");
+$result = $client->queryShowtimesByMovieNear("Minions", "New York", "en");
 dd($result);
 ```
 
