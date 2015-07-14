@@ -246,11 +246,11 @@ class Client implements ClientInterface
      *
      * @return mixed|null
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateOffset = null)
+    public function queryShowtimesByMovieNear($movieTitle, $nearLocation, $lang = 'en', $dateOffset = null)
     {
         // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
 
-        $dataResponse = $this->getData($near, $name, null, null, $lang);
+        $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang);
         $days = [];
         $movie = null;
 

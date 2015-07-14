@@ -58,5 +58,5 @@ interface ClientInterface
      *
      * @return mixed
      */
-    public function queryShowtimesByMovieTitleNear($near, $name, $lang = 'en', $dateoffset = null);
+    public function queryShowtimesByMovieNear($movieTitle, $nearLocation, $lang = 'en', $dateoffset = null);
 }
