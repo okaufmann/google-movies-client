@@ -1,6 +1,5 @@
 preset: psr2
 
 disabled:
-   - unary_operators_spaces
    - concat_without_spaces
    - phpdoc_no_package
