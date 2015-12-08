@@ -11,7 +11,6 @@
  *
  * @version 0.0.1
  */
-
 namespace GoogleMoviesClient\Events;
 
 use GoogleMoviesClient\Exceptions\RuntimeException;

@@ -12,7 +12,6 @@
  *
  * @version 0.0.1
  */
-
 namespace GoogleMoviesClient\Common;
 
 class ParameterBag implements \IteratorAggregate, \Countable
