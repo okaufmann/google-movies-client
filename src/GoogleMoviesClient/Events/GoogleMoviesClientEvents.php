@@ -13,7 +13,7 @@
  */
 namespace GoogleMoviesClient\Events;
 
-final class GoogleMovieClientEvents
+final class GoogleMoviesClientEvents
 {
     /** Request */
     const BEFORE_REQUEST = 'gmc.before_request';
