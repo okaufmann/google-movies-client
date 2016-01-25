@@ -305,7 +305,7 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    public function getMoviesNear($near, $lang = 'en', $dateOffset = null)
+    public function getMoviesNear($near, $lang = 'en', $dateOffset = null, $includeShowtimes = true)
     {
         //http://google.com/movies?near=New%20York&hl=en&sort=1
         //http://google.com/movies?near=New%20York&hl=en&sort=1&start=10
@@ -317,7 +317,7 @@ class Client implements ClientInterface
         if ($dataResponse) {
             $crawler = $dataResponse->getCrawler();
             $parser = new ShowtimeParser($crawler);
-            $movies = $parser->parseMovies(false);
+            $movies = $parser->parseMovies($includeShowtimes);
 
             $navBarPageLinks = $crawler->filter('#navbar a');
             $furtherPages = $navBarPageLinks->each(function (Crawler $node, $i) {
