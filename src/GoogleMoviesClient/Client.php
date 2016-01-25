@@ -330,7 +330,7 @@ class Client implements ClientInterface
                 $dataResponse = $this->getData($near, null, null, null, $lang, null, $page, 1);
                 if ($dataResponse) {
                     $parser = new ShowtimeParser($dataResponse->getCrawler());
-                    $pageMovies = $parser->parseMovies(false);
+                    $pageMovies = $parser->parseMovies($includeShowtimes);
                     $movies = array_merge($movies, $pageMovies);
                 }
             }
