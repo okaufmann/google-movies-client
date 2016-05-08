@@ -113,18 +113,18 @@ class Client implements ClientInterface
      *  Returns Showtimes for a specific movie near a location.
      *
      * @param string $mid
-     * @param string $near
+     * @param string $nearLocation
      * @param string $lang
      *
      * @return array
      */
-    public function getShowtimesByMovieId($mid, $near, $lang = 'en', $dateOffset = 0)
+    public function getShowtimesByMovieId($mid, $nearLocation, $lang = 'en', $dateOffset = 0)
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, $mid, null, $lang, $dateOffset);
+        $dataResponse = $this->getData($nearLocation, null, $mid, null, $lang, $dateOffset);
         $days = [];
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -135,7 +135,7 @@ class Client implements ClientInterface
             $days[] = $result;
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
-                $dataResponse = $this->getData($near, null, $mid, null, $lang, $i);
+                $dataResponse = $this->getData($nearLocation, null, $mid, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
                 $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
@@ -155,19 +155,19 @@ class Client implements ClientInterface
      * Returns Showtimes for a specific Theater.
      *
      * @param string $tid
-     * @param        $near
+     * @param        $nearLocation
      * @param string $lang
      * @param int    $dateOffset
      *
      * @return mixed
      */
-    public function getShowtimesByTheaterId($tid, $near, $lang = 'en', $dateOffset = 0)
+    public function getShowtimesByTheaterId($tid, $nearLocation, $lang = 'en', $dateOffset = 0)
     {
         //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
 
         //TODO: Add multiple result pages parsing
 
-        $dataResponse = $this->getData($near, null, null, $tid, $lang, $dateOffset);
+        $dataResponse = $this->getData($nearLocation, null, null, $tid, $lang, $dateOffset);
         $days = [];
         if ($dataResponse) {
             $dayDate = Carbon::now();
@@ -179,7 +179,7 @@ class Client implements ClientInterface
             $days[] = $result;
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
-                $dataResponse = $this->getData($near, null, null, $tid, $lang, $i);
+                $dataResponse = $this->getData($nearLocation, null, null, $tid, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
                 $result = $parser->getShowtimeDayByTheater($dayDate->addDay(1)->copy());
@@ -198,17 +198,17 @@ class Client implements ClientInterface
     /**
      * Returns Theaters near a location.
      *
-     * @param string $near
+     * @param string $nearLocation
      * @param string $lang
      *
      * @return mixed
      */
-    public function getTheatersNear($near, $lang = 'en')
+    public function getTheatersNear($nearLocation, $lang = 'en')
     {
         //http://google.com/movies?near=thun&hl=de
         //http://google.com/movies?near=thun&hl=de&start=10 (next page)
 
-        $dataResponse = $this->getData($near, null, null, null, $lang);
+        $dataResponse = $this->getData($nearLocation, null, null, null, $lang);
         $theaters = [];
 
         if ($dataResponse) {
@@ -223,7 +223,7 @@ class Client implements ClientInterface
             $furtherPages = array_unique($furtherPages);
 
             foreach ($furtherPages as $page) {
-                $dataResponse = $this->getData($near, null, null, null, $lang, null, $page);
+                $dataResponse = $this->getData($nearLocation, null, null, null, $lang, null, $page);
                 if ($dataResponse) {
                     $parser = new ShowtimeParser($dataResponse->getCrawler());
                     $theaters = array_merge($parser->parseTheaters(false), $theaters);
@@ -237,7 +237,7 @@ class Client implements ClientInterface
     /**
      * Returns Showtimes found by a search for a movie title.
      *
-     * @param string $near
+     * @param string $nearLocation
      * @param string $name
      * @param string $lang
      * @param null   $dateOffset
@@ -276,7 +276,7 @@ class Client implements ClientInterface
             $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
-                $dataResponse = $this->getData($near, $name, null, null, $lang, $i);
+                $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
                 $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
@@ -297,7 +297,7 @@ class Client implements ClientInterface
     /**
      * Returns Showtimes near a location.
      *
-     * @param string $near
+     * @param string $nearLocation
      * @param string $lang
      * @param null   $dateOffset
      *
@@ -305,12 +305,12 @@ class Client implements ClientInterface
      *
      * @return mixed
      */
-    public function getMoviesNear($near, $lang = 'en', $dateOffset = null)
+    public function getMoviesNear($nearLocation, $lang = 'en', $dateOffset = null)
     {
         //http://google.com/movies?near=New%20York&hl=en&sort=1
         //http://google.com/movies?near=New%20York&hl=en&sort=1&start=10
 
-        $dataResponse = $this->getData($near, null, null, null, $lang, null, null, 1);
+        $dataResponse = $this->getData($nearLocation, null, null, null, $lang, null, null, 1);
 
         $movies = [];
 
@@ -327,7 +327,7 @@ class Client implements ClientInterface
             $furtherPages = array_unique($furtherPages);
 
             foreach ($furtherPages as $page) {
-                $dataResponse = $this->getData($near, null, null, null, $lang, null, $page, 1);
+                $dataResponse = $this->getData($nearLocation, null, null, null, $lang, null, $page, 1);
                 if ($dataResponse) {
                     $parser = new ShowtimeParser($dataResponse->getCrawler());
                     $pageMovies = $parser->parseMovies(false);
@@ -490,7 +490,7 @@ class Client implements ClientInterface
     /**
      * get the requested html from google with the passed parameters.
      *
-     * @param null   $near
+     * @param null   $nearLocation
      * @param null   $search
      * @param null   $mid
      * @param null   $tid
@@ -511,7 +511,7 @@ class Client implements ClientInterface
         $sort = null
     ) {
         $params = [
-            'near'  => $near,
+            'near'  => $nearLocation,
             'mid'   => $mid,
             'tid'   => $tid,
             'q'     => $search, //Movie title
