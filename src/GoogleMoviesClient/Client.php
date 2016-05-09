@@ -317,6 +317,10 @@ class Client implements ClientInterface
             $parser = new ShowtimeParser($crawler);
             $movies = $parser->parseMovies(false);
 
+            if($movies == null){
+                return null;
+            }
+
             $movie = $movies[0];
 
             //TODO: Replace by handles multiple movies in results!
