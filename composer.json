@@ -7,6 +7,13 @@
     "movie",
     "client"
   ],
+  "authors": [
+    {
+      "name": "Oliver Kaufmann",
+      "email": "support@mighty-code.com",
+      "homepage": "https://github.com/okaufmann"
+    }
+  ],
   "homepage": "https://github.com/okaufmann/google-movie-client",
   "license": "MIT",
   "require": {
@@ -33,7 +40,9 @@
     }
   ],
   "autoload": {
-    "psr-4": {"GoogleMoviesClient\\": "src/GoogleMoviesClient/"}
+    "psr-4": {
+      "GoogleMoviesClient\\": "src/GoogleMoviesClient/"
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
