@@ -10,14 +10,26 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ResultItemParser extends ParserAbstract
 {
+    /**
+     * ResultItemParser constructor.
+     *
+     * @param Crawler $crawler
+     */
     public function __construct(Crawler $crawler)
     {
         $this->crawler = $crawler;
     }
 
-    public function parseResultMovieItem()
+    /**
+     * Parses the First Movie as Result Item.
+     *
+     * @param null $fallbackUrl
+     *
+     * @return Movie|null
+     */
+    public function parseResultMovieItem($fallbackUrl = null)
     {
-        $resultItem = $this->parseResultItem($this->crawler, 'mid', '.info');
+        $resultItem = $this->parseResultItem($this->crawler, 'mid', '.info', $fallbackUrl);
 
         if ($resultItem == null) {
             return null;
@@ -28,9 +40,16 @@ class ResultItemParser extends ParserAbstract
         return $movie;
     }
 
-    public function parseResultTheaterItem()
+    /**
+     * Parses the First Theater as Result Item.
+     *
+     * @param null $fallbackUrl
+     *
+     * @return Theater|null
+     */
+    public function parseResultTheaterItem($fallbackUrl = null)
     {
-        $resultItem = $this->parseResultItem($this->crawler, 'tid', '.address, .info');
+        $resultItem = $this->parseResultItem($this->crawler, 'tid', '.address, .info', $fallbackUrl);
 
         if ($resultItem == null) {
             return null;
@@ -42,20 +61,39 @@ class ResultItemParser extends ParserAbstract
     }
 
     /**
+     * Parses the content as Result Item (Generic).
+     *
      * @param Crawler $resultItemDiv
-     * @param $paramName
-     * @param $className
+     * @param string  $paramName
+     * @param string  $className
+     * @param string  $fallbackUrl
      *
      * @return ResultItem|null
      */
-    private function parseResultItem(Crawler $resultItemDiv, $paramName, $className)
-    {
-        $resultItemA = $resultItemDiv->filter('h2 a, .name a')->first();
+    private function parseResultItem(
+        Crawler $resultItemDiv,
+        $paramName,
+        $className,
+        $fallbackUrl = null
+    ) {
+        $filter = 'h2 a, .name a';
+
+        $resultItemA = $resultItemDiv->filter($filter)->first();
+
+        if ($resultItemA->count() == 0 && $fallbackUrl != null) {
+            // try get header without href
+            $filter = 'h2[itemprop=name]';
+            $resultItemA = $resultItemDiv->filter($filter)->first();
+        }
 
         $url = $resultItemA->attr('href');
 
-        if (!$url) {
-            return null;
+        if (! $url) {
+            if ($resultItemA->count() == 0 && $fallbackUrl != null) {
+                $url = $fallbackUrl;
+            } else {
+                return null;
+            }
         }
 
         $resultItem = new ResultItem();

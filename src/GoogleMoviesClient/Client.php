@@ -9,6 +9,7 @@ use GoogleMoviesClient\HttpClient\Adapter\AdapterInterface;
 use GoogleMoviesClient\HttpClient\Adapter\GuzzleAdapter;
 use GoogleMoviesClient\HttpClient\HttpClient;
 use GoogleMoviesClient\Models\DataResponse;
+use GoogleMoviesClient\Models\Movie;
 use GoogleMoviesClient\Parsers\ShowtimeParser;
 use Monolog\Handler\StreamHandler;
 use Psr\Log\LogLevel;
@@ -46,6 +47,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * Stores the http client.
+     *
      * @param HttpClient $httpClient
      */
     public function setHttpClient(HttpClient $httpClient)
@@ -54,6 +57,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * Gets the current http client.
+     *
      * @return HttpClient
      */
     public function getHttpClient()
@@ -82,6 +87,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * Gets the clients option.
+     *
      * @return array
      */
     public function getOptions()
@@ -90,6 +97,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * Get a individual option key.
+     *
      * @param string $key
      *
      * @return array
@@ -100,6 +109,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * Sets the client Options.
+     *
      * @param array $options
      *
      * @return array
@@ -112,9 +123,10 @@ class Client implements ClientInterface
     /**
      *  Returns Showtimes for a specific movie near a location.
      *
-     * @param string $mid
-     * @param string $nearLocation
-     * @param string $lang
+     * @param string $mid Goolge movie id
+     * @param string $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param string $lang Language for the search Results. (i.e. en, de, fr).
+     * @param int    $dateOffset Offset of Days from Today (null|0 = Today) Showtimes searched.
      *
      * @return array
      */
@@ -122,10 +134,9 @@ class Client implements ClientInterface
     {
         //http://google.com/movies?near=thun&hl=de&mid=808c5c8cc99039b7
 
-        //TODO: Add multiple result pages parsing
-
         $dataResponse = $this->getData($nearLocation, null, $mid, null, $lang, $dateOffset);
         $days = [];
+
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
@@ -154,10 +165,10 @@ class Client implements ClientInterface
     /**
      * Returns Showtimes for a specific Theater.
      *
-     * @param string $tid
-     * @param        $nearLocation
-     * @param string $lang
-     * @param int    $dateOffset
+     * @param string $tid Google Theater id
+     * @param        $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param string $lang Language for the search Results. (i.e. en, de, fr).
+     * @param int    $dateOffset Offset of Days from Today (null|0 = Today) Showtimes searched.
      *
      * @return mixed
      */
@@ -165,16 +176,14 @@ class Client implements ClientInterface
     {
         //http://google.com/movies?tid=eef3a3f57d224cf7&hl=de
 
-        //TODO: Add multiple result pages parsing
-
         $dataResponse = $this->getData($nearLocation, null, null, $tid, $lang, $dateOffset);
         $days = [];
+
         if ($dataResponse) {
             $dayDate = Carbon::now();
             $dayDate->setTime(0, 0, 0);
 
             $parser = new ShowtimeParser($dataResponse->getCrawler());
-
             $result = $parser->getShowtimeDayByTheater($dayDate->copy());
             $days[] = $result;
 
@@ -198,8 +207,8 @@ class Client implements ClientInterface
     /**
      * Returns Theaters near a location.
      *
-     * @param string $nearLocation
-     * @param string $lang
+     * @param string $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param string $lang Language for the search Results. (i.e. en, de, fr).
      *
      * @return mixed
      */
@@ -235,71 +244,11 @@ class Client implements ClientInterface
     }
 
     /**
-     * Returns Showtimes found by a search for a movie title.
-     *
-     * @param string $nearLocation
-     * @param string $name
-     * @param string $lang
-     * @param null   $dateOffset
-     *
-     * @throws \Exception
-     *
-     * @return mixed|null
-     */
-    public function queryShowtimesByMovieNear($movieTitle, $nearLocation, $lang = 'en', $dateOffset = null)
-    {
-        // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
-
-        $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang);
-        $days = [];
-        $movie = null;
-
-        if ($dataResponse) {
-            $dayDate = Carbon::now();
-            $dayDate->setTime(0, 0, 0);
-            $crawler = $dataResponse->getCrawler();
-            $parser = new ShowtimeParser($crawler);
-            $movies = $parser->parseMovies(false);
-
-            //TODO: Replace by handeles multiple movies in results!
-
-            $movie = $movies[0];
-
-            if (count($movies) > 1) {
-                throw new \Exception('more than one movie in search results are not supported yet!');
-            } else {
-                //Dirty but didn't found better way...
-                $midHref = $crawler->filter('#left_nav a')->first()->attr('href');
-                $movie->setMid(ParseHelper::getParamFromLink($midHref, 'mid'));
-            }
-
-            $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
-
-            for ($i = $dateOffset + 1; $i < 20; $i++) {
-                $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang, $i);
-
-                $parser = new ShowtimeParser($dataResponse->getCrawler());
-                $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
-
-                if ($result == null) {
-                    break;
-                } else {
-                    $days[] = $result;
-                }
-            }
-        }
-
-        $movie->setTheaterShowtimeDays($days);
-
-        return $movie;
-    }
-
-    /**
      * Returns Showtimes near a location.
      *
-     * @param string $nearLocation
-     * @param string $lang
-     * @param null   $dateOffset
+     * @param string $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param string $lang Language for the search Results. (i.e. en, de, fr).
+     * @param null   $dateOffset Offset of Days from Today (null|0 = Today) Showtimes searched.
      *
      * @throws \Exception
      *
@@ -337,6 +286,67 @@ class Client implements ClientInterface
         }
 
         return $movies;
+    }
+
+    /**
+     * Returns Showtimes found by a search for a movie title.
+     *
+     * @param        $movieTitle Title of the searched Movie
+     * @param string $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param string $lang Language for the search Results. (i.e. en, de, fr).
+     * @param null   $dateOffset Offset of Days from Today (null|0 = Today) Showtimes searched.
+     *
+     * @throws \Exception
+     *
+     * @return mixed|null
+     */
+    public function queryShowtimesByMovieNear($movieTitle, $nearLocation, $lang = 'en', $dateOffset = null)
+    {
+        // http://google.com/movies?near=Thun&hl=de&q=jurassic+world
+
+        $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang);
+        $days = [];
+
+        /** @var Movie $movie */
+        $movie = null;
+
+        if ($dataResponse) {
+            $dayDate = Carbon::now();
+            $dayDate->setTime(0, 0, 0);
+            $crawler = $dataResponse->getCrawler();
+            $parser = new ShowtimeParser($crawler);
+            $movies = $parser->parseMovies(false);
+
+            $movie = $movies[0];
+
+            //TODO: Replace by handles multiple movies in results!
+            if (count($movies) > 1) {
+                throw new \Exception('more than one movie in search results are not supported yet!');
+            } else {
+                //Dirty but didn't found better way...
+                $link = $parser->getFirstLeftNavLink();
+                $movie->setMid(ParseHelper::getParamFromLink($link->attr('href'), 'mid'));
+            }
+
+            $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
+
+            for ($i = $dateOffset + 1; $i < 20; $i++) {
+                $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang, $i);
+
+                $parser = new ShowtimeParser($dataResponse->getCrawler());
+                $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
+
+                if ($result == null) {
+                    break;
+                } else {
+                    $days[] = $result;
+                }
+            }
+        }
+
+        $movie->setTheaterShowtimeDays($days);
+
+        return $movie;
     }
 
     /**
@@ -488,36 +498,37 @@ class Client implements ClientInterface
     }
 
     /**
-     * get the requested html from google with the passed parameters.
+     * Get the requested html from google with the passed parameters.
      *
-     * @param null   $nearLocation
-     * @param null   $search
-     * @param null   $mid
-     * @param null   $tid
-     * @param string $language
-     * @param null   $date
-     * @param int    $start
+     * @param null   $nearLocation Search Movies or Theaters near this location. Format CH-3000 Bern.
+     * @param null   $searchText Text for searching for Movies or Theaters.
+     * @param null   $mid Google Movie ID.
+     * @param null   $tid Google Theater ID.
+     * @param string $language Language for the search Results. (i.e. en, de, fr).
+     * @param null   $dayOffset Offset of Days from Today (null|0 = Today) Showtimes searched.
+     * @param int    $pageOffset Count of Items skipped (for Paging).
+     * @param null   $sort Sort by Theaters or Movies.
      *
      * @return DataResponse
      */
     private function getData(
-        $near = null,
-        $search = null,
+        $nearLocation = null,
+        $searchText = null,
         $mid = null,
         $tid = null,
         $language = 'en',
-        $date = null,
-        $start = null,
+        $dayOffset = null,
+        $pageOffset = null,
         $sort = null
     ) {
         $params = [
             'near'  => $nearLocation,
             'mid'   => $mid,
             'tid'   => $tid,
-            'q'     => $search, //Movie title
-            'hl'    => $language, //en, de, fr...
-            'date'  => $date,
-            'start' => $start,
+            'q'     => $searchText,
+            'hl'    => $language,
+            'date'  => $dayOffset,
+            'start' => $pageOffset,
             'sort'  => $sort,
         ];
 

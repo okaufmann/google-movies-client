@@ -12,6 +12,8 @@ use Symfony\Component\DomCrawler\Crawler;
 class ShowtimeParser extends ParserAbstract
 {
     /**
+     * ShowtimeParser constructor.
+     *
      * @param Crawler $crawler
      */
     public function __construct(Crawler $crawler)
@@ -30,6 +32,7 @@ class ShowtimeParser extends ParserAbstract
     {
         $showDay = new TheaterShowtimeDay();
         $theaters = $this->parseTheaters();
+
         if (count($theaters) > 0) {
             $showDay->setTheaters($theaters);
             $showDay->setDate($date);
@@ -51,6 +54,7 @@ class ShowtimeParser extends ParserAbstract
     {
         $showDay = new MovieShowtimeDay();
         $movies = $this->parseMovies();
+
         if (count($movies) > 0) {
             $showDay->setMovies($movies);
             $showDay->setDate($date);
@@ -62,28 +66,44 @@ class ShowtimeParser extends ParserAbstract
     }
 
     /**
+     * Parses the Movies from the result div.
+     *
      * @param bool $includeShowtimes
      *
      * @return array|null
      */
     public function parseMovies($includeShowtimes = true)
     {
-        $movies = [];
-
         $movieDivs = $this->crawler->filter('#movie_results .movie');
 
         $count = $movieDivs->count();
+
         if ($count == 0) {
             return null;
         }
 
-        $movies = $movieDivs->each(function (Crawler $movieDiv, $i) use ($includeShowtimes) {
+        if ($count = 1) {
+            $justOneMovieFound = true;
+        }
+
+        $movies = $movieDivs->each(function (Crawler $movieDiv, $i) use (
+            $includeShowtimes,
+            $justOneMovieFound
+        ) {
 
             $resultItemParser = new ResultItemParser($movieDiv);
 
-            $movie = $resultItemParser->parseResultMovieItem();
+            if ($justOneMovieFound) {
+                //extract url with mid from
+                $firstLeftNavLink = $this->getFirstLeftNavLink();
+                $fallbackUrl = $firstLeftNavLink->attr('href');
+                $movie = $resultItemParser->parseResultMovieItem($fallbackUrl);
+            } else {
+                $movie = $resultItemParser->parseResultMovieItem();
+            }
+
             if ($movie == null) {
-                return;
+                return null;
             }
 
             $movieInfoLinks = $movieDiv->filter('.info a');
@@ -104,37 +124,75 @@ class ShowtimeParser extends ParserAbstract
         return $movies;
     }
 
+    /**
+     * Parses the Theaters from the result div.
+     *
+     * @param bool $includeShowtimes
+     * @return array|null
+     */
     public function parseTheaters($includeShowtimes = true)
     {
-        $theaters = [];
-
         $theatersDivs = $this->crawler->filter('#movie_results .theater');
 
         $count = $theatersDivs->count();
+
         if ($count == 0) {
             return null;
         }
 
-        foreach ($theatersDivs as $i => $contents) {
-            $theaterDiv = new Crawler($contents);
+        if ($count = 1) {
+            $justOneTheaterFound = true;
+        }
+
+        $theaters = $theatersDivs->each(function (Crawler $theaterDiv, $i) use (
+            $includeShowtimes,
+            $justOneTheaterFound
+        ) {
 
             $resultItemParser = new ResultItemParser($theaterDiv);
 
-            $theater = $resultItemParser->parseResultTheaterItem();
-            if ($theater == null) {
-                break;
+            if ($justOneTheaterFound) {
+                $firstLeftNavLink = $this->getFirstLeftNavLink();
+                $fallbackUrl = $firstLeftNavLink->attr('href');
+                $theater = $resultItemParser->parseResultTheaterItem($fallbackUrl);
+            } else {
+                $theater = $resultItemParser->parseResultTheaterItem();
+            }
+
+            if (! $theater) {
+                return null;
             }
 
             if ($includeShowtimes) {
                 $theater->setShowtimeInfo($this->parseShowtimeInfo($theaterDiv));
             }
 
-            $theaters[] = $theater;
-        }
+            return $theater;
+        });
+
+        $theaters = array_filter($theaters, function ($item) {
+            return $item != null;
+        });
 
         return $theaters;
     }
 
+    /**
+     * Gets the first link from the left nav.
+     *
+     * @return Crawler
+     */
+    public function getFirstLeftNavLink()
+    {
+        return $this->crawler->filter('#left_nav .section a')->first();
+    }
+
+    /**
+     * Gets Showtime Infos from a div.
+     *
+     * @param Crawler $resultDiv
+     * @return ShowtimeInfo
+     */
     private function parseShowtimeInfo(Crawler $resultDiv)
     {
         $showtimeSpans = $resultDiv->filter('.times')->first();
@@ -143,9 +201,9 @@ class ShowtimeParser extends ParserAbstract
     }
 
     /**
-     * @param $timeSpanContent
-     * @param $matches
+     * Parses showtime infos from a individual div.
      *
+     * @param Crawler $timeSpan
      * @return ShowtimeInfo
      */
     private function parseShowtime(Crawler $timeSpan)
@@ -173,6 +231,12 @@ class ShowtimeParser extends ParserAbstract
         return $showtime;
     }
 
+    /**
+     * Parses the Time out of the times string.
+     *
+     * @param $input
+     * @return null
+     */
     private function getTime($input)
     {
         //test 12 h format
