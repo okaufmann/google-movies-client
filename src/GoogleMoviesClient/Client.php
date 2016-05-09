@@ -537,8 +537,6 @@ class Client implements ClientInterface
 
         $url = '?' . http_build_query($params);
 
-        echo $url;
-
         $guzzle_response = $this->httpClient->get($url);
 
         $response = new DataResponse();
