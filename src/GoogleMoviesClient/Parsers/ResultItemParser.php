@@ -76,24 +76,22 @@ class ResultItemParser extends ParserAbstract
         $className,
         $fallbackUrl = null
     ) {
-        $filter = 'h2 a, .name a';
+        $filter = 'h2[itemprop=name] a, h2[itemprop=name], .name a';
 
         $resultItemA = $resultItemDiv->filter($filter)->first();
 
-        if ($resultItemA->count() == 0 && $fallbackUrl != null) {
-            // try get header without href
-            $filter = 'h2[itemprop=name]';
-            $resultItemA = $resultItemDiv->filter($filter)->first();
+        if ($resultItemA->count() > 0) {
+            if ($resultItemA->nodeName() == "a") {
+                $url = $resultItemA->attr('href');
+            } elseif ($resultItemA->nodeName() == "h2" && $fallbackUrl != null) {
+                $url = $fallbackUrl;
+            }
+        }else{
+            throw new \Exception("Can't detect title of item!");
         }
 
-        $url = $resultItemA->attr('href');
-
         if (! $url) {
-            if ($resultItemA->count() == 0 && $fallbackUrl != null) {
-                $url = $fallbackUrl;
-            } else {
-                return null;
-            }
+            return null;
         }
 
         $resultItem = new ResultItem();

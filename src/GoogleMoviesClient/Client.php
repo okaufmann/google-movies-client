@@ -143,6 +143,7 @@ class Client implements ClientInterface
 
             $parser = new ShowtimeParser($dataResponse->getCrawler());
             $result = $parser->getShowtimeDayByMovie($dayDate->copy());
+
             $days[] = $result;
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
@@ -321,12 +322,10 @@ class Client implements ClientInterface
                 return null;
             }
 
+            //TODO: handle multiple movies found on one page
             $movie = $movies[0];
 
-            //TODO: Replace by handles multiple movies in results!
-            if (count($movies) > 1) {
-                throw new \Exception('more than one movie in search results are not supported yet!');
-            } else {
+            if ($movie->getMid() == null) {
                 //Dirty but didn't found better way...
                 $link = $parser->getFirstLeftNavLink();
                 $movie->setMid(ParseHelper::getParamFromLink($link->attr('href'), 'mid'));
@@ -335,7 +334,7 @@ class Client implements ClientInterface
             $days[] = $parser->getShowtimeDayByMovie($dayDate->copy());
 
             for ($i = $dateOffset + 1; $i < 20; $i++) {
-                $dataResponse = $this->getData($nearLocation, $movieTitle, null, null, $lang, $i);
+                $dataResponse = $this->getData($nearLocation, null, $movie->getMid(), null, $lang, $i);
 
                 $parser = new ShowtimeParser($dataResponse->getCrawler());
                 $result = $parser->getShowtimeDayByMovie($dayDate->addDay(1)->copy());
@@ -537,6 +536,8 @@ class Client implements ClientInterface
         ];
 
         $url = '?' . http_build_query($params);
+
+        echo $url;
 
         $guzzle_response = $this->httpClient->get($url);
 
