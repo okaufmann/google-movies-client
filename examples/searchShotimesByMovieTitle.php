@@ -6,7 +6,7 @@ use GoogleMoviesClient\Client;
 
 $test = new Client();
 try {
-    $days = $test->queryShowtimesByMovieNear('Minions', 'Bern', 'en');
+    $days = $test->queryShowtimesByMovieNear('Captain America: Civil War', 'Interlaken', 'de');
     dd($days);
 } catch (Exception $ex) {
     echo $ex->getMessage();

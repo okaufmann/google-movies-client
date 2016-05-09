@@ -6,7 +6,8 @@ use GoogleMoviesClient\Client;
 
 $test = new Client();
 try {
-    $days = $test->getShowtimesByMovieId('808c5c8cc99039b7', 'Thun', 'de');
+    // captain america: civil war
+    $days = $test->getShowtimesByMovieId('d86e1329eefc10e5', 'Thun', 'de');
     dd($days);
 } catch (Exception $ex) {
     echo $ex->getMessage();
