@@ -27,7 +27,11 @@ class Theater
             //TODO: Try Parse full address with phone
 
             $this->setAddress($addressParts[0]);
-            $this->setCity($addressParts[1]);
+
+            if (count($addressParts) > 1) {
+                $this->setCity($addressParts[1]);
+            }
+
             if (count($addressParts) == 4) {
                 $this->setState($addressParts[2]);
                 $cityParts = explode(' - ', $addressParts[3]);
