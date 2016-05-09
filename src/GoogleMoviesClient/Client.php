@@ -317,7 +317,7 @@ class Client implements ClientInterface
             $parser = new ShowtimeParser($crawler);
             $movies = $parser->parseMovies(false);
 
-            if($movies == null){
+            if ($movies == null) {
                 return null;
             }
 
