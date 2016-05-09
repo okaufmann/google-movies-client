@@ -5,7 +5,7 @@ namespace GoogleMoviesClient\Helpers;
 class ParseHelper
 {
     /**
-     * get value of a passes param in a query.
+     * Get value of a passes param in a query.
      *
      * @param $url
      * @param $paramName
