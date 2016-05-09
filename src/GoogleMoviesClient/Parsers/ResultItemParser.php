@@ -86,7 +86,7 @@ class ResultItemParser extends ParserAbstract
             } elseif ($resultItemA->nodeName() == "h2" && $fallbackUrl != null) {
                 $url = $fallbackUrl;
             }
-        }else{
+        } else {
             throw new \Exception("Can't detect title of item!");
         }
 
