@@ -487,8 +487,8 @@ class Client implements ClientInterface
     protected function postResolve(array $options = [])
     {
         $this->options['base_url'] = sprintf(
-            '%s://%s',
-            'https',
+            'http%s://%s',
+            $this->options['secure'] ? 's' : '',
             $this->options['host']
         );
         if (! $this->options['adapter']) {
